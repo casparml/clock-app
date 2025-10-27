@@ -1,12 +1,11 @@
-import { IClockRenderer } from './ClockRenderer.interface';
-import {
+import type { IClockRenderer } from './ClockRenderer.interface';
+import type {
     TimeData,
     AnalogRenderData,
     AnalogClockConfig,
     ClockTick,
     ClockNumber
 } from '../types/clock.types';
-
 /**
  * Analog clock renderer - generates traditional clock hands
  */

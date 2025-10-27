@@ -1,4 +1,4 @@
-import { TimeData } from '../types/clock.types';
+import type { TimeData } from '../types/clock.types';
 
 /**
  * Clock data model - pure logic, no DOM dependencies

@@ -1,6 +1,6 @@
 import { ClockModel } from '../models/ClockModel';
-import { IClockRenderer } from '../renderers/ClockRenderer.interface';
-import { IClockAdapter } from '../adapters/WebDOMAdapter';
+import type { IClockRenderer } from '../renderers/ClockRenderer.interface';
+import type { IClockAdapter } from '../adapters/WebDOMAdapter';
 
 /**
  * Main clock controller - coordinates model, renderer, and adapter

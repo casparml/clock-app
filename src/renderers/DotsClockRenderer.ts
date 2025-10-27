@@ -1,5 +1,5 @@
-import { IClockRenderer } from './ClockRenderer.interface';
-import {
+import type {IClockRenderer} from './ClockRenderer.interface';
+import type {
     TimeData,
     DotsRenderData,
     DotsClockConfig,

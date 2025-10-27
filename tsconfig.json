@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "verbatimModuleSyntax": true,
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -37,7 +37,8 @@
   },
   "include": [
     "src/**/*",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "vite.config.ts"
   ],
   "exclude": [
     "node_modules",

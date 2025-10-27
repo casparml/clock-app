@@ -1,8 +1,8 @@
-import { IClockRenderer } from './ClockRenderer.interface';
+import type { IClockRenderer } from './ClockRenderer.interface';
 import { DotsClockRenderer } from './DotsClockRenderer';
 import { DigitalClockRenderer } from './DigitalClockRenderer';
 import { AnalogClockRenderer } from './AnalogClockRenderer';
-import {
+import type {
     ClockType,
     ClockConfig,
     DotsClockConfig,

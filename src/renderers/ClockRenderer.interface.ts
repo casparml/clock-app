@@ -1,4 +1,4 @@
-import { TimeData, RenderData } from '../types/clock.types';
+import type {TimeData, RenderData} from '../types/clock.types';
 
 /**
  * Clock renderer interface

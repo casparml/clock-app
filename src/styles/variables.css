@@ -1,0 +1,23 @@
+:root {
+    /* Hours */
+    --clr-hours: #ff2972;
+
+    /* Minutes */
+    --clr-minutes: #fee800;
+
+    /* Seconds */
+    --clr-seconds: #04fc43;
+}
+
+/* Apply colors to specific clock elements */
+#hrDots {
+    --clr: var(--clr-hours);
+}
+
+#minDots {
+    --clr: var(--clr-minutes);
+}
+
+#secDots {
+    --clr: var(--clr-seconds);
+}

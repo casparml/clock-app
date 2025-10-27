@@ -13,11 +13,29 @@
     <link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
-<!-- Dots Clock Structure -->
-<div id="clock">
-    <div id="hrDots"></div>
-    <div id="minDots"></div>
-    <div id="secDots"></div>
+<!-- Clock Controls -->
+<div id="clockControls">
+    <button class="clock-switch-btn" data-clock-type="digital">Digital</button>
+    <button class="clock-switch-btn active" data-clock-type="dots">Dots</button>
+    <button class="clock-switch-btn" data-clock-type="analog">Analog</button>
+</div>
+
+<!-- Clock Container - Will hold whichever clock is active -->
+<div id="clockContainer">
+    <!-- Digital Clock -->
+    <div id="digitalClock" class="clock-display" style="display: none;">
+        <span class="time hours">00</span><span class="separator">:</span><span class="time minutes">00</span><span class="separator">:</span><span class="time seconds">00</span>
+    </div>
+
+    <!-- Dots Clock Structure -->
+    <div id="clock" class="clock-display">
+        <div id="hrDots"></div>
+        <div id="minDots"></div>
+        <div id="secDots"></div>
+    </div>
+
+    <!-- Analog Clock (will be rendered dynamically) -->
+    <div id="analogClock" class="clock-display" style="display: none;"></div>
 </div>
 
 <!-- Vite will handle this -->

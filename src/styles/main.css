@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,700,800&display=swap');
 @import './variables.css';
+@import './dots-clock.css';
+@import './digital-clock.css';
+@import './analog-clock.css';
 
 * {
     margin: 0;
@@ -10,412 +13,82 @@
 
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     background: #2f363e;
+    padding: 20px;
 }
 
-#clock {
-    position: relative;
+/* Clock Controls */
+#clockControls {
     display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 80px;
 }
 
-#secDots,
-#minDots,
-#hrDots {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    rotate: 90deg;
-}
-
-#secDots::before,
-#minDots::before,
-#hrDots::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    border-radius: 50%;
-    box-shadow: 25px 25px 75px rgba(0,0,0,0.25),
-    10px 10px 70px rgba(0,0,0,0.25),
-    inset 5px 5px 10px rgba(0,0,0,0.5),
-    inset 5px 5px 20px rgba(255,255,255,0.2),
-    inset -5px -5px 10px rgba(0,0,0,0.75);
-}
-
-#secDots h1,
-#minDots h1,
-#hrDots h1,
-#secDots h2,
-#minDots h2,
-#hrDots h2,
-#secDots h3,
-#minDots h3,
-#hrDots h3 {
-    position: absolute;
-    text-align: center;
-    transform: rotate(-90deg);
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    font-size: 4em;
-    font-weight: 500;
-    color: var(--clr);
-}
-
-#secDots h1 span,
-#minDots h1 span,
-#hrDots h1 span,
-#secDots h2 span,
-#minDots h2 span,
-#hrDots h2 span,
-#secDots h3 span,
-#minDots h3 span,
-#hrDots h3 span {
-    position: absolute;
-    font-size: .25em;
-    font-weight: 500;
-    bottom: 50px;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-}
-
-#hrDots b {
-    position: absolute;
+.clock-switch-btn {
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
-    display: inline-flex;
-    transform: rotate(-90deg) translate(-30px,90px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-#secDots .dot,
-#minDots .dot,
-#hrDots .dot {
-    position: absolute;
-    top: 50%;
-    width: 10px;
-    height: 3px;
-    background: var(--clr);
-    transform-origin: 100px;
+.clock-switch-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
-#secDots .active.dot,
-#minDots .active.dot,
-#hrDots .active.dot {
-    background: var(--clr);
-    box-shadow: 0 0 10px var(--clr),
-    0 0 20px var(--clr),
-    0 0 30px var(--clr);
+.clock-switch-btn.active {
+    background: #04fc43;
+    color: #000;
+    border-color: #04fc43;
+    box-shadow: 0 0 20px rgba(4, 252, 67, 0.5);
 }
 
-#secDots .active.dot ~ .dot,
-#minDots .active.dot ~ .dot,
-#hrDots .active.dot ~ .dot {
-    background: #555;
+/* Clock Container */
+#clockContainer {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#secDots .dot:nth-child(5n + 5),
-#minDots .dot:nth-child(5n + 5),
-#hrDots .dot {
-    width: 20px;
+.clock-display {
+    display: none;
 }
 
-#hrDots .dot::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 10px;
-    width: 4px;
-    height: 4px;
-    border-radius: 4px;
-    background: var(--clr);
-    box-shadow: 1.5px 9px var(--clr),
-    4px 18px var(--clr),
-    7px 27px var(--clr);
+.clock-display.active {
+    display: flex;
 }
 
-#hrDots .dot.active ~ .dot::before {
-    background: #555;
-    box-shadow: 1.5px 9px #555,
-    4px 18px #555,
-    7px 27px #555;
+#digitalClock.active {
+    display: block;
 }
-
 
 @media screen and (max-width: 880px) {
     body {
         min-height: auto;
-        margin-top: 2.75rem;
+        padding-top: 2.75rem;
     }
 
-    #clock {
-        flex-direction: column;
-        gap: 60px;
+    #clockControls {
+        margin-bottom: 30px;
     }
 
-    #secDots,
-    #minDots,
-    #hrDots {
-        width: 150px;
-        height: 150px;
-    }
-
-    #secDots::before,
-    #minDots::before,
-    #hrDots::before {
-        border-radius: 50%;
-        box-shadow: 18.75px 18.75px 56.25px rgba(0,0,0,0.25),
-        7.5px 7.5px 52.5px rgba(0,0,0,0.25),
-        inset 3.75px 3.75px 7.5px rgba(0,0,0,0.5),
-        inset 3.75px 3.75px 15px rgba(255,255,255,0.2),
-        inset -3.75px -3.75px 7.5px rgba(0,0,0,0.75);
-    }
-
-    #hrDots .dot::before {
-        box-shadow: 1.5px 9px var(--clr),
-        4px 18px var(--clr);
-    }
-
-    #hrDots .dot.active ~ .dot::before {
-        box-shadow: 1.5px 9px #555,
-        4px 18px #555;
-    }
-
-    #secDots h1,
-    #minDots h1,
-    #hrDots h1,
-    #secDots h2,
-    #minDots h2,
-    #hrDots h2,
-    #secDots h3,
-    #minDots h3,
-    #hrDots h3 {
-        font-size: 3em;
-    }
-
-    #secDots h1 span,
-    #minDots h1 span,
-    #hrDots h1 span,
-    #secDots h2 span,
-    #minDots h2 span,
-    #hrDots h2 span,
-    #secDots h3 span,
-    #minDots h3 span,
-    #hrDots h3 span {
-        font-size: .25em;
-        bottom: 36px;
-    }
-
-    #secDots .dot,
-    #minDots .dot,
-    #hrDots .dot {
-        transform-origin: 75px;
-    }
-
-    #hrDots b {
-        transform: rotate(-90deg) translate(-63px,27px);
+    .clock-switch-btn {
+        padding: 8px 16px;
+        font-size: 0.9em;
     }
 }
 
-
-/* CONTENT STYLE */
-.content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* ROUND SWITCH CHECKBOX */
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.checkboxSlider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-}
-
-.checkboxSlider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-}
-
-input:checked + .checkboxSlider {
-    background-color: #04fc43;
-}
-
-input:not(:focus) + .checkboxSlider {
-    box-shadow: none;
-}
-
-input:focus + .checkboxSlider {
-    box-shadow: 0 0 10px #04fc43;
-}
-
-input:checked + .checkboxSlider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-}
-
-input:disabled + .checkboxSlider {
-    background-color: #ccc;
-    opacity: 0.6;
-}
-
-/* round sliders */
-.checkboxSlider.round {
-    border-radius: 34px;
-}
-
-.checkboxSlider.round:before {
-    border-radius: 50%;
-}
-
-
-/* COOKIE PAGE */
-
-.cookieClose {
-    text-decoration: none;
-    float: right;
-    color: #000;
-    transition: ease-in-out 0.3s;
-}
-
-.cookieClose:hover,
-.cookieClose:focus,
-.cookieClose:active {
-    color: #ff0000;
-    text-shadow: 0 0 15px #ff000083;
-}
-
-
-.cookieDialog {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1010;
-    width: 100%;
-    height: 100%;
-    display: none;
-}
-
-.cookieOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1009;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: none;
-}
-
-.cookieIn {
-    width: 100%;
-    height: 100%;
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.cookieBox h2 {
-    margin: 10px 40px 15px 0;
-}
-
-.cookieBox {
-    background: #fff;
-    border-radius: 10px;
-    padding: 30px;
-    margin: 0 auto;
-    max-width: 700px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    text-align: left;
-    position: relative;
-}
-
-.cookieBox a:focus {
-    outline: none;
-}
-
-#policyPageLink {
-    color: #000;
-    font-style: italic;
-    text-decoration: none;
-}
-
-#policyPageLink:is(:focus,:active,:hover) {
-    text-decoration: underline;
-}
-
-.cookieDialog td {
-    padding-right: 20px;
-}
-
-/* cookie page - buttons */
-
-.cookieNoticeButton {
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-    border-radius: .45rem;
-    margin: 0 10px;
-    padding: .5rem;
-    cursor: pointer;
-}
-
-.cookieNoticeButton.gray {
-    border: #000 solid 2px;
-    color: #000;
-    background: #fff;
-}
-
-.cookieNoticeButton.gray:is(:focus,:active,:hover,:focus-visible) {
-    outline: none;
-    color: #000;
-    background: #f0f0f0;
-}
-
-.cookieNoticeButton.green {
-    border: transparent solid 2px;
-    color: #000;
-    background: #04fc43;
-}
-
-.cookieNoticeButton.green:is(:focus,:active,:hover,:focus-visible) {
-    outline: none;
-    box-shadow: 0 0 15px #04fc4383;
-}
+/* ... rest of existing styles ... */

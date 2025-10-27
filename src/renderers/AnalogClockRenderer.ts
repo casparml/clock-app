@@ -6,8 +6,9 @@ import type {
     ClockTick,
     ClockNumber
 } from '../types/clock.types';
+
 /**
- * Analog clock renderer - generates traditional clock hands
+ * Analog clock renderer - generates traditional clock face
  */
 export class AnalogClockRenderer implements IClockRenderer {
     private config: Required<AnalogClockConfig>;
@@ -25,51 +26,45 @@ export class AnalogClockRenderer implements IClockRenderer {
         };
     }
 
-    private calculateHandAngles(timeData: TimeData): { hour: number; minute: number; second: number } {
-        // Seconds: 6 degrees per second
-        const secondAngle = this.config.smoothSeconds ?
-            (timeData.seconds + (new Date().getMilliseconds() / 1000)) * 6 :
-            timeData.seconds * 6;
-
-        // Minutes: 6 degrees per minute + smooth transition based on seconds
-        const minuteAngle = (timeData.minutes * 6) + (timeData.seconds * 0.1);
-
-        // Hours: 30 degrees per hour + smooth transition based on minutes
-        const hourAngle = (timeData.hours12 * 30) + (timeData.minutes * 0.5);
-
-        return {
-            hour: hourAngle,
-            minute: minuteAngle,
-            second: secondAngle
-        };
+    private calculateHandAngle(value: number, maxValue: number, smoothValue: number = 0): number {
+        const baseAngle = (value / maxValue) * 360;
+        const smoothAngle = smoothValue > 0 ? (smoothValue / maxValue) * 360 : 0;
+        return baseAngle + smoothAngle;
     }
 
     private generateTicks(): ClockTick[] {
         const ticks: ClockTick[] = [];
 
-        if (this.config.showTicks) {
-            // Major ticks (hours)
-            for (let i = 1; i <= this.config.majorTicks; i++) {
-                ticks.push({
-                    type: 'major',
-                    index: i,
-                    angle: i * (360 / this.config.majorTicks),
-                    isMajor: true
-                });
-            }
+        if (!this.config.showTicks) {
+            return ticks;
+        }
 
-            // Minor ticks (minutes)
-            if (this.config.minorTicks > this.config.majorTicks) {
-                for (let i = 1; i <= this.config.minorTicks; i++) {
-                    if (i % (this.config.minorTicks / this.config.majorTicks) !== 0) {
-                        ticks.push({
-                            type: 'minor',
-                            index: i,
-                            angle: i * (360 / this.config.minorTicks),
-                            isMajor: false
-                        });
-                    }
-                }
+        // Generate major ticks (12 hours)
+        for (let i = 0; i < this.config.majorTicks; i++) {
+            const angle = (i / this.config.majorTicks) * 360;
+            ticks.push({
+                type: 'major',
+                index: i,
+                angle: angle,
+                isMajor: true
+            });
+        }
+
+        // Generate minor ticks (60 seconds)
+        for (let i = 0; i < this.config.minorTicks; i++) {
+            const angle = (i / this.config.minorTicks) * 360;
+            // Skip if this position has a major tick
+            const hasMajorTick = ticks.some(tick =>
+                Math.abs(tick.angle - angle) < 1
+            );
+
+            if (!hasMajorTick) {
+                ticks.push({
+                    type: 'minor',
+                    index: i,
+                    angle: angle,
+                    isMajor: false
+                });
             }
         }
 
@@ -77,33 +72,31 @@ export class AnalogClockRenderer implements IClockRenderer {
     }
 
     private generateNumbers(): ClockNumber[] {
+        const numbers: ClockNumber[] = [];
+
         if (!this.config.showNumbers || this.config.numberStyle === 'none') {
-            return [];
+            return numbers;
         }
 
-        const numbers: ClockNumber[] = [];
-        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI',
-            'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+        const romanNumerals = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+        const count = this.config.numberStyle === '24' ? 24 : 12;
 
-        for (let i = 1; i <= 12; i++) {
+        for (let i = 0; i < count; i++) {
+            // Start at 12 o'clock (0 degrees) and go clockwise
+            const angle = (i / count) * 360;
+
             let display: string;
-            switch (this.config.numberStyle) {
-                case 'roman':
-                    display = romanNumerals[i - 1];
-                    break;
-                case '24':
-                    display = i.toString();
-                    break;
-                case '12':
-                default:
-                    display = i.toString();
-                    break;
+            if (this.config.numberStyle === 'roman') {
+                display = romanNumerals[i];
+            } else {
+                // For 12-hour: show 12, 1, 2, ... 11
+                display = (i === 0 ? count : i).toString();
             }
 
             numbers.push({
-                value: i,
+                value: i === 0 ? count : i,
                 display: display,
-                angle: i * 30
+                angle: angle
             });
         }
 
@@ -111,27 +104,44 @@ export class AnalogClockRenderer implements IClockRenderer {
     }
 
     render(timeData: TimeData): AnalogRenderData {
-        const angles = this.calculateHandAngles(timeData);
+        // Calculate angles for each hand (0 degrees = 12 o'clock)
+        const secondAngle = this.calculateHandAngle(timeData.seconds, 60);
+
+        // Minute hand moves smoothly based on seconds
+        const minuteAngle = this.calculateHandAngle(
+            timeData.minutes,
+            60,
+            timeData.seconds / 60  // Smooth movement: add fractional minutes from seconds
+        );
+
+        // Hour hand moves smoothly based on minutes
+        const hourAngle = this.calculateHandAngle(
+            timeData.hours12 % 12,
+            12,
+            timeData.minutes / 60  // Smooth movement: add fractional hours from minutes
+        );
+
+        const hands: AnalogRenderData['hands'] = {
+            hour: {
+                angle: hourAngle,
+                length: 80,
+                width: 8
+            },
+            minute: {
+                angle: minuteAngle,
+                length: 110,
+                width: 6
+            },
+            second: this.config.showSecondHand ? {
+                angle: secondAngle,
+                length: 130,
+                width: 3
+            } : null
+        };
 
         return {
             type: 'analog',
-            hands: {
-                hour: {
-                    angle: angles.hour,
-                    length: 50,
-                    width: 6
-                },
-                minute: {
-                    angle: angles.minute,
-                    length: 75,
-                    width: 4
-                },
-                second: this.config.showSecondHand ? {
-                    angle: angles.second,
-                    length: 85,
-                    width: 2
-                } : null
-            },
+            hands: hands,
             ticks: this.generateTicks(),
             numbers: this.generateNumbers(),
             centerDot: {

@@ -21,34 +21,23 @@ export { WebDOMAdapter } from './adapters/WebDOMAdapter';
 // Export controller
 export { ClockController } from './controllers/ClockController';
 
-// Imports for initialization
-import { ClockRendererFactory } from './renderers/ClockRendererFactory';
-import { WebDOMAdapter } from './adapters/WebDOMAdapter';
-import { ClockController } from './controllers/ClockController';
-import type { ClockType, ClockConfig } from './types/clock.types';
+// Export manager
+export { ClockManager } from './managers/ClockManager';
 
-/**
- * Simple initialization function
- */
-export function initClock(type: ClockType = 'dots', config: ClockConfig = {}): ClockController {
-    console.log('🕐 Initializing clock...', type);
-    const renderer = ClockRendererFactory.create(type, config);
-    const adapter = new WebDOMAdapter({});
-    const controller = new ClockController(renderer, adapter);
-    controller.start();
-    console.log('✅ Clock started!');
-    return controller;
-}
+// Imports for initialization
+import { ClockManager } from './managers/ClockManager';
 
 // Auto-start for web
 if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing dots clock');
-            initClock('dots'); // Default to dots clock
+            console.log('DOM loaded, initializing clock manager');
+            const manager = new ClockManager();
+            manager.start();
         });
     } else {
-        console.log('DOM ready, initializing dots clock');
-        initClock('dots'); // Default to dots clock
+        console.log('DOM ready, initializing clock manager');
+        const manager = new ClockManager();
+        manager.start();
     }
 }

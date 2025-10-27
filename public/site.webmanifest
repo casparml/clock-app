@@ -1,0 +1,39 @@
+{
+    "name": "Simple Clock",
+    "short_name": "Clock",
+    "description": "Free online simple digital clock with real-time display of hours, minutes, and seconds. Features automatic timezone detection, color-coded time segments, and AM/PM indicator. Easy to read and always accurate.",
+    "start_url": "/index.html",
+    "scope": "/",
+    "display": "standalone",
+    "theme_color": "#212121",
+    "background_color": "#212121",
+    "icons": [
+      {
+        "src": "templates/assets/img/favicon-96x96.png",
+        "sizes": "96x96",
+        "type": "image/png"
+      },
+      {
+        "src": "templates/assets/img/apple-touch-icon.png",
+        "sizes": "180x180",
+        "type": "image/png"
+      },
+      {
+        "src": "templates/assets/img/favicon.ico",
+        "sizes": "48x48",
+        "type": "image/x-icon"
+      },
+      {
+        "src": "templates/assets/img/web-app-manifest-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "templates/assets/img/web-app-manifest-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ]
+  }

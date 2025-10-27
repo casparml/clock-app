@@ -6,6 +6,7 @@ import type {
     ClockTick,
     ClockNumber
 } from '../types/clock.types';
+import { SettingsService } from '../services/settingsService';
 
 /**
  * Analog clock renderer - generates traditional clock face
@@ -14,8 +15,11 @@ export class AnalogClockRenderer implements IClockRenderer {
     private config: Required<AnalogClockConfig>;
 
     constructor(config: AnalogClockConfig = {}) {
+        // Load settings from localStorage
+        const settings = SettingsService.loadSettings();
+
         this.config = {
-            showSecondHand: true,
+            showSecondHand: config.showSecondHand !== undefined ? config.showSecondHand : settings.clock.showSeconds,
             smoothSeconds: false,
             showNumbers: true,
             numberStyle: '12',
@@ -24,6 +28,10 @@ export class AnalogClockRenderer implements IClockRenderer {
             minorTicks: 60,
             ...config
         };
+    }
+
+    public setShowSeconds(show: boolean): void {
+        this.config.showSecondHand = show;
     }
 
     private calculateHandAngle(value: number, maxValue: number, smoothValue: number = 0): number {
@@ -132,11 +140,12 @@ export class AnalogClockRenderer implements IClockRenderer {
                 length: 110,
                 width: 6
             },
-            second: this.config.showSecondHand ? {
+            // Always include second hand data, but mark if it should be visible
+            second: {
                 angle: secondAngle,
                 length: 130,
                 width: 3
-            } : null
+            }
         };
 
         return {
@@ -147,7 +156,8 @@ export class AnalogClockRenderer implements IClockRenderer {
             centerDot: {
                 radius: 8
             },
-            timeData: timeData
+            timeData: timeData,
+            showSecondHand: this.config.showSecondHand  // Add this flag
         };
     }
 }

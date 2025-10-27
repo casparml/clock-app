@@ -6,14 +6,19 @@ import type {
     Dot,
     DotStyles
 } from '../types/clock.types';
+import { SettingsService } from '../services/settingsService';
 
 /**
  * Dots clock renderer - generates dot-based clock
  */
 export class DotsClockRenderer implements IClockRenderer {
     private config: Required<DotsClockConfig>;
+    private showSeconds: boolean = true;
 
     constructor(config: DotsClockConfig = {}) {
+        // Load settings from localStorage
+        const settings = SettingsService.loadSettings();
+
         this.config = {
             secondsTotal: 60,
             secondsDegree: 6,
@@ -21,8 +26,28 @@ export class DotsClockRenderer implements IClockRenderer {
             minutesDegree: 6,
             hoursTotal: 12,
             hoursDegree: 30,
+            showSeconds: config.showSeconds !== undefined ? config.showSeconds : settings.clock.showSeconds,
             ...config
         };
+
+        this.showSeconds = this.config.showSeconds;
+
+        // Apply visibility immediately
+        this.updateSecondsVisibility();
+    }
+
+    public setShowSeconds(show: boolean): void {
+        this.showSeconds = show;
+        this.config.showSeconds = show;
+        this.updateSecondsVisibility();
+    }
+
+    private updateSecondsVisibility(): void {
+        // Hide/show seconds container
+        const secDots = document.getElementById('secDots');
+        if (secDots) {
+            secDots.style.display = this.showSeconds ? 'flex' : 'none';
+        }
     }
 
     private generateDots(total: number, current: number, degree: number, isActive: boolean = false): Dot[] {
@@ -48,18 +73,8 @@ export class DotsClockRenderer implements IClockRenderer {
     }
 
     render(timeData: TimeData): DotsRenderData {
-        return {
+        const result: DotsRenderData = {
             type: 'dots',
-            seconds: {
-                dots: this.generateDots(
-                    this.config.secondsTotal,
-                    timeData.seconds,
-                    this.config.secondsDegree,
-                    true
-                ),
-                value: this.formatNumber(timeData.seconds),
-                label: 'Seconds'
-            },
             minutes: {
                 dots: this.generateDots(
                     this.config.minutesTotal,
@@ -80,6 +95,22 @@ export class DotsClockRenderer implements IClockRenderer {
                 daytime: timeData.daytime
             }
         };
+
+        // Only include seconds if showSeconds is true
+        if (this.showSeconds) {
+            result.seconds = {
+                dots: this.generateDots(
+                    this.config.secondsTotal,
+                    timeData.seconds,
+                    this.config.secondsDegree,
+                    true
+                ),
+                value: this.formatNumber(timeData.seconds),
+                label: 'Seconds'
+            };
+        }
+
+        return result;
     }
 
     private formatNumber(number: number): string {

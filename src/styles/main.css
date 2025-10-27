@@ -3,6 +3,7 @@
 @import './dots-clock.css';
 @import './digital-clock.css';
 @import './analog-clock.css';
+@import './settings.css';
 
 * {
     margin: 0;
@@ -90,5 +91,3 @@ body {
         font-size: 0.9em;
     }
 }
-
-/* ... rest of existing styles ... */

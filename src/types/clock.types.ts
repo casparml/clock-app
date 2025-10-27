@@ -6,6 +6,7 @@ export interface TimeData {
     hours24: number;
     minutes: number;
     seconds: number;
+    milliseconds?: number;
     daytime: 'AM' | 'PM';
 }
 
@@ -54,10 +55,12 @@ export interface TimeUnitDisplay {
  * Dots clock render data
  */
 export interface DotsRenderData {
-    type?: 'dots';
-    seconds: TimeUnitDisplay;
+    type: 'dots';
+    seconds?: TimeUnitDisplay;  // Make this optional
     minutes: TimeUnitDisplay;
-    hours: TimeUnitDisplay;
+    hours: TimeUnitDisplay & {
+        daytime?: 'AM' | 'PM';
+    };
 }
 
 /**
@@ -72,6 +75,7 @@ export interface DigitalRenderData {
     daytime: string | null;
     separator: string;
     showSeconds: boolean;
+    blinkSeparator: boolean;
     date?: DateInfo;
 }
 
@@ -119,6 +123,7 @@ export interface AnalogRenderData {
         radius: number;
     };
     timeData: TimeData;
+    showSecondHand?: boolean;  // Add this line
 }
 
 /**
@@ -146,6 +151,7 @@ export interface DotsClockConfig {
     minutesDegree?: number;
     hoursTotal?: number;
     hoursDegree?: number;
+    showSeconds?: boolean;
 }
 
 /**

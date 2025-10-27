@@ -26,18 +26,50 @@ export { ClockManager } from './managers/ClockManager';
 
 // Imports for initialization
 import { ClockManager } from './managers/ClockManager';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
 
 // Auto-start for web
 if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing clock manager');
+            console.log('DOM loaded, initializing clock manager and React');
+
+            // Initialize clock manager
             const manager = new ClockManager();
             manager.start();
+
+            // Initialize React settings
+            initializeReactSettings();
         });
     } else {
-        console.log('DOM ready, initializing clock manager');
+        console.log('DOM ready, initializing clock manager and React');
+
+        // Initialize clock manager
         const manager = new ClockManager();
         manager.start();
+
+        // Initialize React settings
+        initializeReactSettings();
+    }
+}
+
+function initializeReactSettings() {
+    try {
+        // Create a container for React settings
+        const settingsContainer = document.createElement('div');
+        settingsContainer.id = 'react-settings-root';
+        document.body.appendChild(settingsContainer);
+
+        console.log('React settings container created:', settingsContainer);
+
+        // Mount React app
+        const root = createRoot(settingsContainer);
+        root.render(React.createElement(App));
+
+        console.log('React settings app mounted successfully');
+    } catch (error) {
+        console.error('Failed to initialize React settings:', error);
     }
 }

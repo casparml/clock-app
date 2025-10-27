@@ -2,6 +2,7 @@ import { ClockController } from '../controllers/ClockController';
 import { ClockRendererFactory } from '../renderers/ClockRendererFactory';
 import { WebDOMAdapter } from '../adapters/WebDOMAdapter';
 import type { ClockType } from '../types/clock.types';
+import { SettingsService } from '../services/settingsService';
 
 export class ClockManager {
     private currentController: ClockController | null = null;
@@ -122,22 +123,48 @@ export class ClockManager {
     }
 
     private getDefaultConfig(type: ClockType) {
+        const settings = SettingsService.loadSettings();
+
         switch (type) {
             case 'digital':
                 return {
-                    use24Hour: true,
-                    showSeconds: true,
-                    showDate: false
+                    use24Hour: settings.clock.timeFormat === '24h',
+                    showSeconds: settings.clock.showSeconds,
+                    showDate: settings.clock.showDate
                 };
             case 'analog':
                 return {
-                    showSecondHand: true,
+                    showSecondHand: settings.clock.showSeconds,
                     smoothSeconds: true,
                     showNumbers: true,
                     numberStyle: '12' as const
                 };
+            case 'dots':
+                return {
+                    showSeconds: settings.clock.showSeconds
+                };
             default:
                 return {};
+        }
+    }
+
+    private applySettings(): void {
+        console.log('Applying settings, current type:', this.currentType);
+
+        // Re-initialize the current clock with new settings
+        if (this.currentType) {
+            const type = this.currentType;
+
+            // Stop current controller
+            if (this.currentController) {
+                this.currentController.stop();
+                this.currentController = null;
+            }
+
+            // Re-initialize with new settings
+            setTimeout(() => {
+                this.initializeClock(type);
+            }, 50);
         }
     }
 
@@ -146,6 +173,12 @@ export class ClockManager {
         const savedType = (localStorage.getItem('preferredClockType') as ClockType) || 'dots';
         console.log(`Starting with ${savedType} clock`);
         this.switchClock(savedType);
+
+        // Listen for settings changes from React
+        window.addEventListener('settingsChanged', () => {
+            console.log('Settings changed event received');
+            this.applySettings();
+        });
     }
 
     stop(): void {

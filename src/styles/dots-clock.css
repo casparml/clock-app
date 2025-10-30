@@ -25,11 +25,11 @@
     position: absolute;
     inset: -20px;
     border-radius: 50%;
-    box-shadow: 25px 25px 75px rgba(0,0,0,0.25),
-    10px 10px 70px rgba(0,0,0,0.25),
-    inset 5px 5px 10px rgba(0,0,0,0.5),
-    inset 5px 5px 20px rgba(255,255,255,0.2),
-    inset -5px -5px 10px rgba(0,0,0,0.75);
+    /*box-shadow: 25px 25px 75px rgba(0,0,0,0.25),*/
+    /*10px 10px 70px rgba(0,0,0,0.25),*/
+    /*inset 5px 5px 10px rgba(0,0,0,0.5),*/
+    /*inset 5px 5px 20px rgba(255,255,255,0.2),*/
+    /*inset -5px -5px 10px rgba(0,0,0,0.75);*/
 }
 
 #secDots h1,
@@ -162,11 +162,11 @@
     #minDots::before,
     #hrDots::before {
         border-radius: 50%;
-        box-shadow: 18.75px 18.75px 56.25px rgba(0,0,0,0.25),
-        7.5px 7.5px 52.5px rgba(0,0,0,0.25),
-        inset 3.75px 3.75px 7.5px rgba(0,0,0,0.5),
-        inset 3.75px 3.75px 15px rgba(255,255,255,0.2),
-        inset -3.75px -3.75px 7.5px rgba(0,0,0,0.75);
+        /*box-shadow: 18.75px 18.75px 56.25px rgba(0,0,0,0.25),*/
+        /*7.5px 7.5px 52.5px rgba(0,0,0,0.25),*/
+        /*inset 3.75px 3.75px 7.5px rgba(0,0,0,0.5),*/
+        /*inset 3.75px 3.75px 15px rgba(255,255,255,0.2),*/
+        /*inset -3.75px -3.75px 7.5px rgba(0,0,0,0.75);*/
     }
 
     #hrDots .dot::before {

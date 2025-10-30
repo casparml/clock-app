@@ -18,7 +18,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #2f363e;
+    /*background: #2f363e;*/
+    background: #15181d;
     padding: 20px;
 }
 

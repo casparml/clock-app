@@ -63,7 +63,7 @@ Each file serves a specific purpose:
 
 ### License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/casparml/Digital-Clock?tab=MIT-1-ov-file) file for details.
+This project is licensed under the MIT License — see the [LICENSE](https://github.com/casparml/Digital-Clock?tab=MIT-1-ov-file) file for details.
 
 ## Author
 

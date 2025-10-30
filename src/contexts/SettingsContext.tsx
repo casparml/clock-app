@@ -4,10 +4,14 @@ import type { ReactNode } from 'react';
 import type {UserSettings} from '../types/settings';
 import { SettingsService } from '../services/settingsService';
 
+export type ClockType = 'digital' | 'dots' | 'analog';
+
 interface SettingsContextType {
     settings: UserSettings;
     updateSettings: (settings: Partial<UserSettings>) => void;
     resetSettings: () => void;
+    clockType: ClockType;
+    setClockType: (type: ClockType) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -16,6 +20,23 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [settings, setSettings] = useState<UserSettings>(() =>
         SettingsService.loadSettings()
     );
+
+    const [clockType, setClockType] = useState<ClockType>(() => {
+        const saved = localStorage.getItem('clockType');
+        return (saved as ClockType) || 'digital';
+    });
+
+    // Save clockType to localStorage and notify ClockManager when it changes
+    useEffect(() => {
+        localStorage.setItem('clockType', clockType);
+
+        // Dispatch custom event to notify ClockManager
+        window.dispatchEvent(new CustomEvent('clockTypeChanged', {
+            detail: clockType
+        }));
+
+        console.log('Clock type changed to:', clockType);
+    }, [clockType]);
 
     const updateSettings = (partialSettings: Partial<UserSettings>) => {
         const newSettings = SettingsService.updateSettings(partialSettings);
@@ -58,7 +79,7 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     }, [settings.clock.theme]);
 
     return (
-        <SettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
+        <SettingsContext.Provider value={{ settings, updateSettings, resetSettings, clockType, setClockType }}>
             {children}
         </SettingsContext.Provider>
     );

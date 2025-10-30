@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 
 const Settings: React.FC = () => {
-    const { settings, updateSettings, resetSettings } = useSettings();
+    const { settings, updateSettings, resetSettings, clockType, setClockType } = useSettings();
     const [isOpen, setIsOpen] = useState(false);
 
     const handleToggle = () => setIsOpen(!isOpen);
@@ -68,6 +68,33 @@ const Settings: React.FC = () => {
                         </div>
 
                         <div className="settings-content">
+                            {/* Clock Type Section */}
+                            <div className="settings-group">
+                                <label className="settings-label">
+                                    <span className="label-icon">🕐</span> Clock Type
+                                </label>
+                                <div className="clock-type-selector">
+                                    <button
+                                        className={`clock-switch-btn ${clockType === 'digital' ? 'active' : ''}`}
+                                        onClick={() => setClockType('digital')}
+                                    >
+                                        Digital
+                                    </button>
+                                    <button
+                                        className={`clock-switch-btn ${clockType === 'dots' ? 'active' : ''}`}
+                                        onClick={() => setClockType('dots')}
+                                    >
+                                        Dots
+                                    </button>
+                                    <button
+                                        className={`clock-switch-btn ${clockType === 'analog' ? 'active' : ''}`}
+                                        onClick={() => setClockType('analog')}
+                                    >
+                                        Analog
+                                    </button>
+                                </div>
+                            </div>
+
                             {/* Theme Section */}
                             <div className="settings-group">
                                 <label className="settings-label">

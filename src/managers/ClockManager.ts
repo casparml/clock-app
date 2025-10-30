@@ -10,6 +10,7 @@ export class ClockManager {
 
     constructor() {
         this.setupControls();
+        this.listenToClockTypeChanges();
     }
 
     private setupControls(): void {
@@ -23,6 +24,28 @@ export class ClockManager {
                 }
             });
         });
+    }
+
+    private listenToClockTypeChanges(): void {
+        // Listen for clock type changes from React settings
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'clockType' && e.newValue) {
+                const newType = e.newValue as ClockType;
+                if (newType !== this.currentType) {
+                    console.log('Clock type changed via storage event:', newType);
+                    this.switchClock(newType);
+                }
+            }
+        });
+
+        // Listen for custom event from settings context
+        window.addEventListener('clockTypeChanged', ((e: CustomEvent) => {
+            const newType = e.detail as ClockType;
+            if (newType !== this.currentType) {
+                console.log('Clock type changed via custom event:', newType);
+                this.switchClock(newType);
+            }
+        }) as EventListener);
     }
 
     switchClock(type: ClockType): void {
@@ -87,7 +110,7 @@ export class ClockManager {
             console.log(`${type} clock initialized and started`);
 
             // Save preference
-            localStorage.setItem('preferredClockType', type);
+            localStorage.setItem('clockType', type);
         } catch (error) {
             console.error(`Failed to initialize ${type} clock:`, error);
         }
@@ -171,8 +194,8 @@ export class ClockManager {
     }
 
     start(): void {
-        // Get saved preference or default to dots
-        const savedType = (localStorage.getItem('preferredClockType') as ClockType) || 'digital';
+        // Get saved preference or default to digital
+        const savedType = (localStorage.getItem('clockType') as ClockType) || 'digital';
         console.log(`Starting with ${savedType} clock`);
         this.switchClock(savedType);
 

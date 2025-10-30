@@ -2,6 +2,7 @@
 #clock {
     position: relative;
     display: flex;
+    flex-wrap: wrap; /* Add this */
     justify-content: center;
     align-items: center;
     gap: 80px;
@@ -128,6 +129,20 @@
     box-shadow: 1.5px 9px #555,
     4px 18px #555,
     7px 27px #555;
+}
+
+#clock .date {
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5em;
+    opacity: 0.8;
+    white-space: nowrap;
+    flex-basis: 100%; /* Add this to force date to take full width */
+    margin-top: 20px; /* Add some spacing */
 }
 
 @media screen and (max-width: 880px) {

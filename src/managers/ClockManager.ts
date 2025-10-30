@@ -137,11 +137,13 @@ export class ClockManager {
                     showSecondHand: settings.clock.showSeconds,
                     smoothSeconds: true,
                     showNumbers: true,
-                    numberStyle: '12' as const
+                    numberStyle: '12' as const,
+                    showDate: settings.clock.showDate
                 };
             case 'dots':
                 return {
-                    showSeconds: settings.clock.showSeconds
+                    showSeconds: settings.clock.showSeconds,
+                    showDate: settings.clock.showDate
                 };
             default:
                 return {};
@@ -170,7 +172,7 @@ export class ClockManager {
 
     start(): void {
         // Get saved preference or default to dots
-        const savedType = (localStorage.getItem('preferredClockType') as ClockType) || 'dots';
+        const savedType = (localStorage.getItem('preferredClockType') as ClockType) || 'digital';
         console.log(`Starting with ${savedType} clock`);
         this.switchClock(savedType);
 

@@ -1,10 +1,12 @@
 /* Analog Clock Styles */
 #analogClock {
     display: flex;
+    flex-direction: column; /* Add this */
     justify-content: center;
     align-items: center;
     min-height: 400px;
     width: 100%;
+    gap: 30px; /* Add spacing between clock and date */
 }
 
 .clock-face {
@@ -126,6 +128,21 @@
             0 0 20px rgba(255, 255, 255, 0.3),
             inset 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 10;
+}
+
+#analogClock .date {
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5em; /* Adjust size as needed */
+    opacity: 0.8;
+    white-space: nowrap;
+
+    margin-top: 20px; /* Add some spacing */
+
 }
 
 /* Responsive design */

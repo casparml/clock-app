@@ -10,6 +10,7 @@ export class ClockController {
     private renderer: IClockRenderer;
     private adapter: IClockAdapter;
     private intervalId: number | null = null;
+    private isRunning: boolean = false;
 
     constructor(renderer: IClockRenderer, adapter: IClockAdapter) {
         this.model = new ClockModel();
@@ -17,22 +18,45 @@ export class ClockController {
         this.adapter = adapter;
     }
 
-    update(): void {
+    start(): void {
+        if (this.isRunning) {
+            return;
+        }
+
+        this.isRunning = true;
+
+        // Update immediately on start
+        this.update();
+
+        // Then update every second, synchronized to the system clock
+        const now = new Date();
+        const msUntilNextSecond = 1000 - now.getMilliseconds();
+
+        // Wait until the next full second, then start the interval
+        setTimeout(() => {
+            this.update();
+            this.intervalId = window.setInterval(() => {
+                this.update();
+            }, 1000);
+        }, msUntilNextSecond);
+    }
+
+    private update(): void {
         this.model.updateTime();
         const timeData = this.model.getTimeData();
         const renderData = this.renderer.render(timeData);
         this.adapter.update(renderData);
     }
 
-    start(interval: number = 1000): void {
-        this.update();
-        this.intervalId = window.setInterval(() => this.update(), interval);
-    }
-
     stop(): void {
         if (this.intervalId !== null) {
             clearInterval(this.intervalId);
             this.intervalId = null;
+        }
+
+        // Call cleanup on the renderer if it has one
+        if (this.renderer && typeof (this.renderer as any).cleanup === 'function') {
+            (this.renderer as any).cleanup();
         }
     }
 }

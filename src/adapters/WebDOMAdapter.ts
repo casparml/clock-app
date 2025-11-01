@@ -19,13 +19,20 @@ export interface IClockAdapter {
  */
 export class WebDOMAdapter implements IClockAdapter {
     private elements: DOMElements;
+    private lastDotsDateValue: string | null = null;
 
     constructor(elements: DOMElements = {}) {
+        // Determine clock type based on which elements are provided
+        if (elements.container) {
+        } else if (!elements.seconds && !elements.minutes && !elements.hours) {
+        } else {
+        }
+
         this.elements = {
-            seconds: elements.seconds || (typeof document !== 'undefined' ? document.getElementById('secDots') : null),
-            minutes: elements.minutes || (typeof document !== 'undefined' ? document.getElementById('minDots') : null),
-            hours: elements.hours || (typeof document !== 'undefined' ? document.getElementById('hrDots') : null),
-            container: elements.container || (typeof document !== 'undefined' ? document.getElementById('clockContainer') : null)
+            seconds: elements.seconds || null,
+            minutes: elements.minutes || null,
+            hours: elements.hours || null,
+            container: elements.container || null
         };
     }
 
@@ -37,84 +44,236 @@ export class WebDOMAdapter implements IClockAdapter {
         }).join('');
     }
 
-    private renderDigital(renderData: DigitalRenderData): string {
-        const daytimeHTML = renderData.daytime ? `<span class="daytime">${renderData.daytime}</span>` : '';
-        const dateHTML = renderData.date ? `<div class="date">${renderData.date.formatted}</div>` : '';
+    private updateDigitalClock(renderData: DigitalRenderData): void {
+        const digitalClock = document.getElementById('digitalClock');
+        if (!digitalClock) return;
 
-        return `
-            <div class="digital-clock">
-                <div class="time-display">
-                    <span class="hours">${renderData.hours}</span>
-                    <span class="separator">${renderData.separator}</span>
-                    <span class="minutes">${renderData.minutes}</span>
-                    ${renderData.showSeconds ? `<span class="separator">${renderData.separator}</span><span class="seconds">${renderData.seconds}</span>` : ''}
-                    ${daytimeHTML}
-                </div>
-                ${dateHTML}
-            </div>
-        `;
+        const hoursElement = digitalClock.querySelector('.hours');
+        const minutesElement = digitalClock.querySelector('.minutes');
+        const secondsElement = digitalClock.querySelector('.seconds');
+        const separators = digitalClock.querySelectorAll('.separator');
+
+        if (hoursElement) hoursElement.textContent = renderData.hours;
+        if (minutesElement) minutesElement.textContent = renderData.minutes;
+
+        // Update seconds and visibility
+        if (secondsElement) {
+            secondsElement.textContent = renderData.seconds;
+            (secondsElement as HTMLElement).style.display = renderData.showSeconds ? 'inline' : 'none';
+        }
+
+        // Update separators visibility and blinking
+        separators.forEach((separator, index) => {
+            const sepElement = separator as HTMLElement;
+
+            // Hide last separator if seconds are hidden
+            if (index === separators.length - 1 && !renderData.showSeconds) {
+                sepElement.style.display = 'none';
+            } else {
+                sepElement.style.display = 'inline';
+            }
+
+            // Toggle blink animation
+            if (renderData.blinkSeparator) {
+                sepElement.style.animation = 'blink 1s infinite';
+            } else {
+                sepElement.style.animation = 'none';
+                sepElement.style.opacity = '1';
+            }
+        });
+
+        // Handle AM/PM
+        const timeContainer = digitalClock.querySelector('.time-container');
+        if (timeContainer) {
+            let daytimeElement = timeContainer.querySelector('.daytime');
+            if (renderData.daytime) {
+                if (!daytimeElement) {
+                    daytimeElement = document.createElement('span');
+                    daytimeElement.className = 'daytime';
+                    timeContainer.appendChild(daytimeElement);
+                }
+                daytimeElement.textContent = ` ${renderData.daytime}`;
+            } else if (daytimeElement) {
+                daytimeElement.remove();
+            }
+        }
+
+        // Handle date - render outside time container
+        let dateElement = digitalClock.querySelector('.date');
+        if (renderData.date) {
+            if (!dateElement) {
+                dateElement = document.createElement('div');
+                dateElement.className = 'date';
+                digitalClock.appendChild(dateElement);
+            }
+            dateElement.textContent = renderData.date.formatted;
+        } else if (dateElement) {
+            dateElement.remove();
+        }
+    }
+
+    private updateDotsClock(dotsData: DotsRenderData): void {
+        const seconds = this.elements.seconds || document.getElementById('secDots');
+        const minutes = this.elements.minutes || document.getElementById('minDots');
+        const hours = this.elements.hours || document.getElementById('hrDots');
+
+        // Update seconds only if data exists
+        if (seconds && dotsData.seconds) {
+            seconds.innerHTML =
+                this.renderDots(dotsData.seconds.dots) +
+                `<h1>${dotsData.seconds.value}<br><span>${dotsData.seconds.label}</span></h1>`;
+        }
+
+        // Update minutes
+        if (minutes) {
+            minutes.innerHTML =
+                this.renderDots(dotsData.minutes.dots) +
+                `<h2>${dotsData.minutes.value}<br><span>${dotsData.minutes.label}</span></h2>`;
+        }
+
+        // Update hours
+        if (hours) {
+            hours.innerHTML =
+                this.renderDots(dotsData.hours.dots) +
+                `<b>${dotsData.hours.daytime || ''}</b>` +
+                `<h3>${dotsData.hours.value}<br><span>${dotsData.hours.label}</span></h3>`;
+        }
+
+        // Handle date - use requestAnimationFrame to avoid conflicts with innerHTML updates
+        const clockContainer = document.getElementById('clock');
+        if (clockContainer) {
+            requestAnimationFrame(() => {
+                let dateElement = clockContainer.querySelector('.date') as HTMLElement;
+                const newDateValue = dotsData.date?.formatted || null;
+
+                if (newDateValue) {
+                    if (!dateElement) {
+                        dateElement = document.createElement('div');
+                        dateElement.className = 'date';
+                        clockContainer.appendChild(dateElement);
+                    }
+                    // Only update text if it changed
+                    if (dateElement.textContent !== newDateValue) {
+                        dateElement.textContent = newDateValue;
+                    }
+                    this.lastDotsDateValue = newDateValue;
+                } else {
+                    // Remove date if it exists and we don't want to show it anymore
+                    if (dateElement) {
+                        dateElement.remove();
+                    }
+                    this.lastDotsDateValue = null;
+                }
+            });
+        }
     }
 
     private renderAnalog(renderData: AnalogRenderData): string {
-        const ticksHTML = renderData.ticks.map(tick =>
-            `<div class="tick ${tick.type}" style="transform: rotate(${tick.angle}deg)"></div>`
-        ).join('');
+        let html = '<div class="clock-face">';
 
-        const numbersHTML = renderData.numbers.map(num => {
-            const radians = (num.angle - 90) * (Math.PI / 180);
-            const radius = 40;
-            const x = 50 + radius * Math.cos(radians);
-            const y = 50 + radius * Math.sin(radians);
-            return `<div class="clock-number" style="left: ${x}%; top: ${y}%">${num.display}</div>`;
-        }).join('');
+        // Render ticks
+        renderData.ticks.forEach(tick => {
+            html += `<div class="tick ${tick.type}" style="transform: rotate(${tick.angle}deg)"></div>`;
+        });
 
-        const secondHandHTML = renderData.hands.second ?
-            `<div class="hand second-hand" style="transform: rotate(${renderData.hands.second.angle}deg); height: ${renderData.hands.second.length}%; width: ${renderData.hands.second.width}px"></div>` : '';
+        // Render numbers with corrected positioning
+        renderData.numbers.forEach(number => {
+            // Convert angle to radians (subtract 90 to start at 12 o'clock)
+            const angleRad = (number.angle - 90) * (Math.PI / 180);
 
-        return `
-            <div class="analog-clock">
-                <div class="clock-face">
-                    ${ticksHTML}
-                    ${numbersHTML}
-                    <div class="hand hour-hand" style="transform: rotate(${renderData.hands.hour.angle}deg); height: ${renderData.hands.hour.length}%; width: ${renderData.hands.hour.width}px"></div>
-                    <div class="hand minute-hand" style="transform: rotate(${renderData.hands.minute.angle}deg); height: ${renderData.hands.minute.length}%; width: ${renderData.hands.minute.width}px"></div>
-                    ${secondHandHTML}
-                    <div class="center-dot" style="width: ${renderData.centerDot.radius * 2}px; height: ${renderData.centerDot.radius * 2}px"></div>
-                </div>
-            </div>
-        `;
+            // Calculate position on a circle
+            // Using 40% radius to position numbers inside the clock face
+            const radiusPercent = 38;
+            const x = 50 + radiusPercent * Math.cos(angleRad);
+            const y = 50 + radiusPercent * Math.sin(angleRad);
+
+            html += `<div class="clock-number" style="
+            left: ${x}%;
+            top: ${y}%;
+            transform: translate(-50%, -50%);
+        ">${number.display}</div>`;
+        });
+
+        // Render hour hand
+        html += `<div class="hand hour-hand" style="transform: rotate(${renderData.hands.hour.angle}deg);"></div>`;
+
+        // Render minute hand
+        html += `<div class="hand minute-hand" style="transform: rotate(${renderData.hands.minute.angle}deg);"></div>`;
+
+        // Render second hand with visibility control
+        if (renderData.hands.second) {
+            const display = renderData.showSecondHand !== false ? 'block' : 'none';
+            html += `<div class="hand second-hand" style="transform: rotate(${renderData.hands.second.angle}deg); display: ${display};"></div>`;
+        }
+
+        // Render center dot
+        html += '<div class="center-dot"></div>';
+
+        html += '</div>';
+
+        // Add date if present
+        if (renderData.date) {
+            html += `<div class="date">${renderData.date.formatted}</div>`;
+        }
+        return html;
+    }
+
+    private updateAnalogClock(renderData: AnalogRenderData): void {
+        const container = this.elements.container || document.getElementById('analogClock');
+        if (!container) {
+            console.error('Analog clock container not found');
+            return;
+        }
+
+        // Check if we need to re-render the clock face (only on initialization or settings change)
+        let clockFace = container.querySelector('.clock-face');
+        if (!clockFace) {
+            // Initial render
+            container.innerHTML = this.renderAnalog(renderData);
+            clockFace = container.querySelector('.clock-face');
+        } else {
+            // Update only the hands
+            const hourHand = container.querySelector('.hour-hand') as HTMLElement;
+            const minuteHand = container.querySelector('.minute-hand') as HTMLElement;
+            const secondHand = container.querySelector('.second-hand') as HTMLElement;
+
+            if (hourHand) {
+                hourHand.style.transform = `rotate(${renderData.hands.hour.angle}deg)`;
+            }
+            if (minuteHand) {
+                minuteHand.style.transform = `rotate(${renderData.hands.minute.angle}deg)`;
+            }
+            if (secondHand && renderData.hands.second) {
+                secondHand.style.transform = `rotate(${renderData.hands.second.angle}deg)`;
+                secondHand.style.display = renderData.showSecondHand !== false ? 'block' : 'none';
+            }
+        }
+
+        // Handle date - only update if changed
+        let dateElement = container.querySelector('.date') as HTMLElement;
+        if (renderData.date) {
+            if (!dateElement) {
+                dateElement = document.createElement('div');
+                dateElement.className = 'date';
+                container.appendChild(dateElement);
+            }
+            // Only update text if it changed
+            if (dateElement.textContent !== renderData.date.formatted) {
+                dateElement.textContent = renderData.date.formatted;
+            }
+        } else if (dateElement) {
+            dateElement.remove();
+        }
     }
 
     update(renderData: RenderData): void {
         if (renderData.type === 'digital') {
-            if (this.elements.container) {
-                this.elements.container.innerHTML = this.renderDigital(renderData);
-            }
+            this.updateDigitalClock(renderData);
         } else if (renderData.type === 'analog') {
-            if (this.elements.container) {
-                this.elements.container.innerHTML = this.renderAnalog(renderData);
-            }
+            this.updateAnalogClock(renderData);
         } else {
-            // Original dots clock rendering
-            const dotsData = renderData as DotsRenderData;
-            if (this.elements.seconds) {
-                this.elements.seconds.innerHTML =
-                    this.renderDots(dotsData.seconds.dots) +
-                    `<h1>${dotsData.seconds.value}<br><span>${dotsData.seconds.label}</span></h1>`;
-            }
-
-            if (this.elements.minutes) {
-                this.elements.minutes.innerHTML =
-                    this.renderDots(dotsData.minutes.dots) +
-                    `<h2>${dotsData.minutes.value}<br><span>${dotsData.minutes.label}</span></h2>`;
-            }
-
-            if (this.elements.hours) {
-                this.elements.hours.innerHTML =
-                    this.renderDots(dotsData.hours.dots) +
-                    `<b>${dotsData.hours.daytime}</b>` +
-                    `<h3>${dotsData.hours.value}<br><span>${dotsData.hours.label}</span></h3>`;
-            }
+            // Dots clock (type is 'dots' or undefined for backwards compatibility)
+            this.updateDotsClock(renderData as DotsRenderData);
         }
     }
 }

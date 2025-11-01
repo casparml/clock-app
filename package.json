@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build --config vite.config.ts",
     "preview": "vite preview",
     "test": "vitest",
     "deploy": "npm run build && gh-pages -d dist"

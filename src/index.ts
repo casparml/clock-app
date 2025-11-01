@@ -26,7 +26,6 @@ export { ClockController } from './controllers/ClockController';
 export { ClockManager } from './managers/ClockManager';
 
 // Imports for initialization
-import { ClockManager } from './managers/ClockManager';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
@@ -50,30 +49,16 @@ function initializeApp() {
         timestamp: Date.now()
     });
 
-    // Initialize clock manager
-    const manager = new ClockManager();
-    manager.start();
-
-    // Initialize React settings
-    initializeReactSettings();
-}
-
-function initializeReactSettings() {
-    try {
-        // Create a container for React settings
-        const settingsContainer = document.createElement('div');
-        settingsContainer.id = 'react-settings-root';
-        document.body.appendChild(settingsContainer);
-
-        // Mount React app
-        const root = createRoot(settingsContainer);
+    // Mount React app to root
+    const rootElement = document.getElementById('root');
+    if (rootElement) {
+        const root = createRoot(rootElement);
         root.render(React.createElement(App));
-
         analytics.track('react_mounted');
-    } catch (error) {
-        console.error('Failed to initialize React settings:', error);
+    } else {
+        console.error('Root element not found');
         analytics.track('react_mount_error', {
-            error: error instanceof Error ? error.message : String(error)
+            error: 'Root element not found'
         });
     }
 }

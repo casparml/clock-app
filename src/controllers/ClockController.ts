@@ -53,6 +53,10 @@ export class ClockController {
             clearInterval(this.intervalId);
             this.intervalId = null;
         }
-        this.isRunning = false;
+
+        // Call cleanup on the renderer if it has one
+        if (this.renderer && typeof (this.renderer as any).cleanup === 'function') {
+            (this.renderer as any).cleanup();
+        }
     }
 }

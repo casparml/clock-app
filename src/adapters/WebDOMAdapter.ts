@@ -264,8 +264,6 @@ export class WebDOMAdapter implements IClockAdapter {
         } else if (dateElement) {
             dateElement.remove();
         }
-
-        console.log('Analog clock updated');
     }
 
     update(renderData: RenderData): void {

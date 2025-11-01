@@ -16,6 +16,11 @@ export class ClockManager {
     private setupControls(): void {
         const buttons = document.querySelectorAll('.clock-switch-btn');
         buttons.forEach(button => {
+            // Skip React-rendered buttons (they handle their own clicks)
+            if (button.closest('#react-settings-root')) {
+                return;
+            }
+            
             button.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
                 const clockType = target.getAttribute('data-clock-type') as ClockType;
@@ -49,13 +54,12 @@ export class ClockManager {
     }
 
     switchClock(type: ClockType): void {
-        console.log(`Switching to ${type} clock`);
-
-        // Don't switch if already on this type
-        if (type === this.currentType && this.currentController) {
-            console.log(`Already on ${type} clock`);
+        if (this.currentType === type && this.currentController) {
+            console.log(`Already on ${type} clock, skipping switch`);
             return;
         }
+
+        console.log(`Switching to ${type} clock`);
 
         // Stop current controller
         if (this.currentController) {
@@ -63,6 +67,9 @@ export class ClockManager {
             this.currentController.stop();
             this.currentController = null;
         }
+
+        // Set currentType immediately to prevent duplicate switches
+        this.currentType = type;
 
         // Small delay to ensure cleanup
         setTimeout(() => {
@@ -105,7 +112,6 @@ export class ClockManager {
             const adapter = new WebDOMAdapter(this.getAdapterElements(type));
             this.currentController = new ClockController(renderer, adapter);
             this.currentController.start();
-            this.currentType = type;
 
             console.log(`${type} clock initialized and started`);
 

@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 
 const Settings: React.FC = () => {
     const { settings, updateSettings, resetSettings, clockType, setClockType } = useSettings();
     const [isOpen, setIsOpen] = useState(false);
+    const [activeType, setActiveType] = useState(clockType);
+
+    // Only sync when opening the panel, not when clockType changes
+    useEffect(() => {
+        if (isOpen) {
+            setActiveType(clockType);
+        }
+    }, [isOpen]); // Remove clockType from dependencies
 
     const handleToggle = () => setIsOpen(!isOpen);
+
+    const handleClockTypeClick = (type: 'digital' | 'dots' | 'analog') => {
+        setActiveType(type);
+        setClockType(type);
+    };
 
     return (
         <>
@@ -75,20 +88,20 @@ const Settings: React.FC = () => {
                                 </label>
                                 <div className="clock-type-selector">
                                     <button
-                                        className={`clock-switch-btn ${clockType === 'digital' ? 'active' : ''}`}
-                                        onClick={() => setClockType('digital')}
+                                        className={`clock-switch-btn ${activeType === 'digital' ? 'active' : ''}`}
+                                        onClick={() => handleClockTypeClick('digital')}
                                     >
                                         Digital
                                     </button>
                                     <button
-                                        className={`clock-switch-btn ${clockType === 'dots' ? 'active' : ''}`}
-                                        onClick={() => setClockType('dots')}
+                                        className={`clock-switch-btn ${activeType === 'dots' ? 'active' : ''}`}
+                                        onClick={() => handleClockTypeClick('dots')}
                                     >
                                         Dots
                                     </button>
                                     <button
-                                        className={`clock-switch-btn ${clockType === 'analog' ? 'active' : ''}`}
-                                        onClick={() => setClockType('analog')}
+                                        className={`clock-switch-btn ${activeType === 'analog' ? 'active' : ''}`}
+                                        onClick={() => handleClockTypeClick('analog')}
                                     >
                                         Analog
                                     </button>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock App</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+  <script type="module" crossorigin src="/assets/index-CzPdBBI_.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DjYXRjUi.css">
+</head>
+<body>
+
+<!-- Clock Container - Will hold whichever clock is active -->
+<div id="clockContainer">
+    <!-- Digital Clock -->
+    <div id="digitalClock" class="clock-display" style="display: none;">
+        <div class="time-container">
+            <span class="time hours">00</span><span class="separator">:</span><span class="time minutes">00</span><span class="separator">:</span><span class="time seconds">00</span>
+        </div>
+    </div>
+
+    <!-- Dots Clock Structure -->
+    <div id="clock" class="clock-display">
+        <div id="hrDots"></div>
+        <div id="minDots"></div>
+        <div id="secDots"></div>
+    </div>
+
+    <!-- Analog Clock (will be rendered dynamically) -->
+    <div id="analogClock" class="clock-display" style="display: none;"></div>
+</div>
+
+<!-- Vite will handle this -->
+</body>
+</html>

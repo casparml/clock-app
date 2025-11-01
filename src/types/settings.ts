@@ -16,7 +16,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
     clock: {
         timeFormat: '12h',
         showSeconds: true,
-        theme: 'auto',
+        theme: 'dark',
         dateFormat: 'long',
         showDate: true,
         blinkSeparator: true,

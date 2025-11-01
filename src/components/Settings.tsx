@@ -1,23 +1,80 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
+import analytics from '../services/analytics.service';
 
 const Settings: React.FC = () => {
     const { settings, updateSettings, resetSettings, clockType, setClockType } = useSettings();
     const [isOpen, setIsOpen] = useState(false);
     const [activeType, setActiveType] = useState(clockType);
 
-    // Only sync when opening the panel, not when clockType changes
+    // Track settings panel open/close
     useEffect(() => {
         if (isOpen) {
             setActiveType(clockType);
+            analytics.track('settings_opened');
+        } else if (!isOpen) {
+            analytics.track('settings_closed');
         }
-    }, [isOpen]);
+    }, [isOpen, clockType]);
 
-    const handleToggle = () => setIsOpen(!isOpen);
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
+        analytics.trackInteraction('settings_toggle', 'settings_button');
+    };
 
     const handleClockTypeClick = (type: 'digital' | 'dots' | 'analog') => {
+        const previousType = activeType;
         setActiveType(type);
         setClockType(type);
+        analytics.trackClockChange(type);
+        analytics.trackSettingChange('clockType', previousType, type);
+    };
+
+    // const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //     const newTheme = e.target.value as 'light' | 'dark' | 'minimal' | 'auto';
+    //     const oldTheme = settings.clock.theme;
+    //     updateSettings({
+    //         clock: { ...settings.clock, theme: newTheme }
+    //     });
+    //     analytics.trackSettingChange('theme', oldTheme, newTheme);
+    // };
+
+    const handleTimeFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newFormat = e.target.value as '12h' | '24h';
+        const oldFormat = settings.clock.timeFormat;
+        updateSettings({
+            clock: { ...settings.clock, timeFormat: newFormat }
+        });
+        analytics.trackSettingChange('timeFormat', oldFormat, newFormat);
+    };
+
+    const handleToggleSetting = (settingName: 'showSeconds' | 'showDate' | 'blinkSeparator', value: boolean) => {
+        const oldValue = settings.clock[settingName];
+        updateSettings({
+            clock: { ...settings.clock, [settingName]: value }
+        });
+        analytics.trackSettingChange(settingName, oldValue, value);
+    };
+
+    const handleDateFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newFormat = e.target.value as 'short' | 'long' | 'numeric';
+        const oldFormat = settings.clock.dateFormat;
+        updateSettings({
+            clock: {
+                ...settings.clock,
+                dateFormat: newFormat
+            }
+        });
+        analytics.trackSettingChange('dateFormat', oldFormat, newFormat);
+    };
+
+    const handleReset = () => {
+        if (confirm('Reset all settings to defaults?')) {
+            analytics.track('settings_reset', {
+                previous_settings: { ...settings }
+            });
+            resetSettings();
+        }
     };
 
     return (
@@ -115,11 +172,7 @@ const Settings: React.FC = () => {
                             {/*    </label>*/}
                             {/*    <select*/}
                             {/*        value={settings.clock.theme}*/}
-                            {/*        onChange={(e) =>*/}
-                            {/*            updateSettings({*/}
-                            {/*                clock: { ...settings.clock, theme: e.target.value as 'light' | 'dark' | 'minimal' | 'auto' },*/}
-                            {/*            })*/}
-                            {/*        }*/}
+                            {/*        onChange={handleThemeChange}*/}
                             {/*        className="settings-select"*/}
                             {/*    >*/}
                             {/*        <option value="light">☀️ Light</option>*/}
@@ -136,11 +189,7 @@ const Settings: React.FC = () => {
                                 </label>
                                 <select
                                     value={settings.clock.timeFormat}
-                                    onChange={(e) =>
-                                        updateSettings({
-                                            clock: { ...settings.clock, timeFormat: e.target.value as '12h' | '24h' },
-                                        })
-                                    }
+                                    onChange={handleTimeFormatChange}
                                     className="settings-select"
                                 >
                                     <option value="12h">12 Hour</option>
@@ -160,11 +209,7 @@ const Settings: React.FC = () => {
                                         <input
                                             type="checkbox"
                                             checked={settings.clock.showSeconds}
-                                            onChange={(e) =>
-                                                updateSettings({
-                                                    clock: { ...settings.clock, showSeconds: e.target.checked },
-                                                })
-                                            }
+                                            onChange={(e) => handleToggleSetting('showSeconds', e.target.checked)}
                                         />
                                         <span className="toggle-slider"></span>
                                     </label>
@@ -180,11 +225,7 @@ const Settings: React.FC = () => {
                                         <input
                                             type="checkbox"
                                             checked={settings.clock.showDate}
-                                            onChange={(e) =>
-                                                updateSettings({
-                                                    clock: { ...settings.clock, showDate: e.target.checked },
-                                                })
-                                            }
+                                            onChange={(e) => handleToggleSetting('showDate', e.target.checked)}
                                         />
                                         <span className="toggle-slider"></span>
                                     </label>
@@ -200,11 +241,7 @@ const Settings: React.FC = () => {
                                         <input
                                             type="checkbox"
                                             checked={settings.clock.blinkSeparator}
-                                            onChange={(e) =>
-                                                updateSettings({
-                                                    clock: { ...settings.clock, blinkSeparator: e.target.checked },
-                                                })
-                                            }
+                                            onChange={(e) => handleToggleSetting('blinkSeparator', e.target.checked)}
                                         />
                                         <span className="toggle-slider"></span>
                                     </label>
@@ -219,14 +256,7 @@ const Settings: React.FC = () => {
                                     </label>
                                     <select
                                         value={settings.clock.dateFormat}
-                                        onChange={(e) =>
-                                            updateSettings({
-                                                clock: {
-                                                    ...settings.clock,
-                                                    dateFormat: e.target.value as 'short' | 'long' | 'numeric',
-                                                },
-                                            })
-                                        }
+                                        onChange={handleDateFormatChange}
                                         className="settings-select"
                                     >
                                         <option value="long">Long (January 1, 2025)</option>
@@ -238,11 +268,7 @@ const Settings: React.FC = () => {
 
                             {/* Reset Button */}
                             <button
-                                onClick={() => {
-                                    if (confirm('Reset all settings to defaults?')) {
-                                        resetSettings();
-                                    }
-                                }}
+                                onClick={handleReset}
                                 className="settings-reset-btn"
                             >
                                 🔄 Reset to Defaults

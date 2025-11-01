@@ -118,10 +118,8 @@ export class AnalyticsService {
         setTimeout(() => {
             clearInterval(checkGtag);
             if (!this.gaInitialized) {
-                // Only log error in production
-                if (!import.meta.env.DEV) {
-                    console.error('Google Analytics failed to initialize (blocked by ad blocker or privacy extension)');
-                }
+                // Silently fail - GA is blocked or unavailable
+                this.gaInitialized = false;
             }
         }, 5000);
     }
@@ -142,10 +140,8 @@ export class AnalyticsService {
             
             // Handle script loading errors silently (likely ad blocker)
             script.onerror = () => {
-                // Only log in production, silently fail in development
-                if (!import.meta.env.DEV) {
-                    console.error('Failed to load Google Analytics (blocked by ad blocker or privacy extension)');
-                }
+                // Silently fail - this is expected when ad blockers are active
+                this.gaInitialized = false;
             };
             
             document.head.appendChild(script);
@@ -155,7 +151,8 @@ export class AnalyticsService {
                 send_page_view: false
             });
         } catch (error) {
-            console.error('Error loading GA script:', error);
+            // Silently handle errors
+            this.gaInitialized = false;
         }
     }
 

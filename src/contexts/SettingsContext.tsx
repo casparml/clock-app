@@ -77,17 +77,22 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         const theme = settings.clock.theme;
         const root = document.documentElement;
 
+        // Remove all theme classes first
+        root.classList.remove('dark', 'light', 'minimal');
+
         if (theme === 'dark') {
             root.classList.add('dark');
         } else if (theme === 'light') {
-            root.classList.remove('dark');
-        } else {
+            root.classList.add('light');
+        } else if (theme === 'minimal') {
+            root.classList.add('minimal');
+        } else if (theme === 'auto') {
             // Auto mode - use system preference
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (prefersDark) {
                 root.classList.add('dark');
             } else {
-                root.classList.remove('dark');
+                root.classList.add('light');
             }
         }
     }, [settings.clock.theme]);

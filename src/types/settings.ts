@@ -1,12 +1,11 @@
 // src/types/settings.ts
 export interface ClockSettings {
+    theme: 'light' | 'dark' | 'minimal' | 'auto';
     timeFormat: '12h' | '24h';
     showSeconds: boolean;
-    theme: 'light' | 'dark' | 'auto';
-    dateFormat: 'short' | 'long' | 'numeric';
     showDate: boolean;
+    dateFormat: 'short' | 'long' | 'numeric';
     blinkSeparator: boolean;
-    timezone?: string; // Optional: for displaying different timezones
 }
 
 export interface UserSettings {

@@ -1,21 +1,56 @@
-// src/contexts/SettingsContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type {UserSettings} from '../types/settings';
 import { SettingsService } from '../services/settingsService';
+
+export type ClockType = 'digital' | 'dots' | 'analog';
 
 interface SettingsContextType {
     settings: UserSettings;
     updateSettings: (settings: Partial<UserSettings>) => void;
     resetSettings: () => void;
+    clockType: ClockType;
+    setClockType: (type: ClockType) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+
+// Export hook before the component
+export function useSettings(): SettingsContextType {
+    const context = useContext(SettingsContext);
+    if (!context) {
+        throw new Error('useSettings must be used within a SettingsProvider');
+    }
+    return context;
+}
 
 export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [settings, setSettings] = useState<UserSettings>(() =>
         SettingsService.loadSettings()
     );
+
+    const [clockType, setClockType] = useState<ClockType>(() => {
+        const saved = localStorage.getItem('clockType');
+        return (saved as ClockType) || 'digital';
+    });
+
+    const isInitialMount = useRef(true);
+
+    // Save clockType to localStorage and notify ClockManager when it changes
+    useEffect(() => {
+        // Skip dispatching event on initial mount
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        localStorage.setItem('clockType', clockType);
+
+        // Dispatch custom event to notify ClockManager
+        window.dispatchEvent(new CustomEvent('clockTypeChanged', {
+            detail: clockType
+        }));
+    }, [clockType]);
 
     const updateSettings = (partialSettings: Partial<UserSettings>) => {
         const newSettings = SettingsService.updateSettings(partialSettings);
@@ -58,16 +93,8 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     }, [settings.clock.theme]);
 
     return (
-        <SettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
+        <SettingsContext.Provider value={{ settings, updateSettings, resetSettings, clockType, setClockType }}>
             {children}
         </SettingsContext.Provider>
     );
-};
-
-export const useSettings = (): SettingsContextType => {
-    const context = useContext(SettingsContext);
-    if (!context) {
-        throw new Error('useSettings must be used within a SettingsProvider');
-    }
-    return context;
 };

@@ -1,10 +1,12 @@
 /* Analog Clock Styles */
 #analogClock {
     display: flex;
+    flex-direction: column; /* Add this */
     justify-content: center;
     align-items: center;
     min-height: 400px;
     width: 100%;
+    gap: 30px; /* Add spacing between clock and date */
 }
 
 .clock-face {
@@ -12,11 +14,11 @@
     width: 400px;
     height: 400px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2a3139 0%, #3d444d 100%);
-    box-shadow:
-            0 0 0 15px rgba(255, 255, 255, 0.05),
-            inset 0 0 30px rgba(0, 0, 0, 0.5),
-            0 20px 60px rgba(0, 0, 0, 0.5);
+    /*background: linear-gradient(135deg, #2a3139 0%, #3d444d 100%);*/
+    /*box-shadow:*/
+    /*        0 0 0 15px rgba(255, 255, 255, 0.05),*/
+    /*        inset 0 0 30px rgba(0, 0, 0, 0.5),*/
+    /*        0 20px 60px rgba(0, 0, 0, 0.5);*/
 }
 
 .clock-face::before {
@@ -24,10 +26,10 @@
     position: absolute;
     inset: 20px;
     border-radius: 50%;
-    background: radial-gradient(circle, #3d444d 0%, #2a3139 100%);
-    box-shadow:
-            inset 0 5px 15px rgba(0, 0, 0, 0.5),
-            inset 0 -5px 15px rgba(255, 255, 255, 0.1);
+    /*background: radial-gradient(circle, #3d444d 0%, #2a3139 100%);*/
+    /*box-shadow:*/
+    /*        inset 0 5px 15px rgba(0, 0, 0, 0.5),*/
+    /*        inset 0 -5px 15px rgba(255, 255, 255, 0.1);*/
     z-index: 1;
 }
 
@@ -126,6 +128,21 @@
             0 0 20px rgba(255, 255, 255, 0.3),
             inset 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 10;
+}
+
+#analogClock .date {
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5em; /* Adjust size as needed */
+    opacity: 0.8;
+    white-space: nowrap;
+
+    margin-top: 20px; /* Add some spacing */
+
 }
 
 /* Responsive design */

@@ -7,6 +7,7 @@ import type {
     ClockNumber
 } from '../types/clock.types';
 import { SettingsService } from '../services/settingsService';
+import { DateFormatter } from '../utils/DateFormatter';
 
 /**
  * Analog clock renderer - generates traditional clock face
@@ -26,12 +27,17 @@ export class AnalogClockRenderer implements IClockRenderer {
             showTicks: true,
             majorTicks: 12,
             minorTicks: 60,
+            showDate: config.showDate !== undefined ? config.showDate : settings.clock.showDate,
             ...config
         };
     }
 
     public setShowSeconds(show: boolean): void {
         this.config.showSecondHand = show;
+    }
+
+    public setShowDate(show: boolean): void {
+        this.config.showDate = show;
     }
 
     private calculateHandAngle(value: number, maxValue: number, smoothValue: number = 0): number {
@@ -140,7 +146,6 @@ export class AnalogClockRenderer implements IClockRenderer {
                 length: 110,
                 width: 6
             },
-            // Always include second hand data, but mark if it should be visible
             second: {
                 angle: secondAngle,
                 length: 130,
@@ -148,7 +153,7 @@ export class AnalogClockRenderer implements IClockRenderer {
             }
         };
 
-        return {
+        const result: AnalogRenderData = {
             type: 'analog',
             hands: hands,
             ticks: this.generateTicks(),
@@ -157,7 +162,13 @@ export class AnalogClockRenderer implements IClockRenderer {
                 radius: 8
             },
             timeData: timeData,
-            showSecondHand: this.config.showSecondHand  // Add this flag
+            showSecondHand: this.config.showSecondHand
         };
+
+        if (this.config.showDate) {
+            result.date = DateFormatter.getDateInfo();
+        }
+
+        return result;
     }
 }

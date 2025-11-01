@@ -2,6 +2,7 @@
 #clock {
     position: relative;
     display: flex;
+    flex-wrap: wrap; /* Add this */
     justify-content: center;
     align-items: center;
     gap: 80px;
@@ -24,11 +25,11 @@
     position: absolute;
     inset: -20px;
     border-radius: 50%;
-    box-shadow: 25px 25px 75px rgba(0,0,0,0.25),
-    10px 10px 70px rgba(0,0,0,0.25),
-    inset 5px 5px 10px rgba(0,0,0,0.5),
-    inset 5px 5px 20px rgba(255,255,255,0.2),
-    inset -5px -5px 10px rgba(0,0,0,0.75);
+    /*box-shadow: 25px 25px 75px rgba(0,0,0,0.25),*/
+    /*10px 10px 70px rgba(0,0,0,0.25),*/
+    /*inset 5px 5px 10px rgba(0,0,0,0.5),*/
+    /*inset 5px 5px 20px rgba(255,255,255,0.2),*/
+    /*inset -5px -5px 10px rgba(0,0,0,0.75);*/
 }
 
 #secDots h1,
@@ -130,6 +131,20 @@
     7px 27px #555;
 }
 
+#clock .date {
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5em;
+    opacity: 0.8;
+    white-space: nowrap;
+    flex-basis: 100%; /* Add this to force date to take full width */
+    margin-top: 20px; /* Add some spacing */
+}
+
 @media screen and (max-width: 880px) {
     #clock {
         flex-direction: column;
@@ -147,11 +162,11 @@
     #minDots::before,
     #hrDots::before {
         border-radius: 50%;
-        box-shadow: 18.75px 18.75px 56.25px rgba(0,0,0,0.25),
-        7.5px 7.5px 52.5px rgba(0,0,0,0.25),
-        inset 3.75px 3.75px 7.5px rgba(0,0,0,0.5),
-        inset 3.75px 3.75px 15px rgba(255,255,255,0.2),
-        inset -3.75px -3.75px 7.5px rgba(0,0,0,0.75);
+        /*box-shadow: 18.75px 18.75px 56.25px rgba(0,0,0,0.25),*/
+        /*7.5px 7.5px 52.5px rgba(0,0,0,0.25),*/
+        /*inset 3.75px 3.75px 7.5px rgba(0,0,0,0.5),*/
+        /*inset 3.75px 3.75px 15px rgba(255,255,255,0.2),*/
+        /*inset -3.75px -3.75px 7.5px rgba(0,0,0,0.75);*/
     }
 
     #hrDots .dot::before {

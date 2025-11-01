@@ -7,6 +7,7 @@ import type {
     DotStyles
 } from '../types/clock.types';
 import { SettingsService } from '../services/settingsService';
+import { DateFormatter } from '../utils/DateFormatter';
 
 /**
  * Dots clock renderer - generates dot-based clock
@@ -27,6 +28,7 @@ export class DotsClockRenderer implements IClockRenderer {
             hoursTotal: 12,
             hoursDegree: 30,
             showSeconds: config.showSeconds !== undefined ? config.showSeconds : settings.clock.showSeconds,
+            showDate: config.showDate !== undefined ? config.showDate : settings.clock.showDate,
             ...config
         };
 
@@ -40,6 +42,10 @@ export class DotsClockRenderer implements IClockRenderer {
         this.showSeconds = show;
         this.config.showSeconds = show;
         this.updateSecondsVisibility();
+    }
+
+    public setShowDate(show: boolean): void {
+        this.config.showDate = show;
     }
 
     private updateSecondsVisibility(): void {
@@ -108,6 +114,10 @@ export class DotsClockRenderer implements IClockRenderer {
                 value: this.formatNumber(timeData.seconds),
                 label: 'Seconds'
             };
+        }
+
+        if (this.config.showDate) {
+            result.date = DateFormatter.getDateInfo();
         }
 
         return result;

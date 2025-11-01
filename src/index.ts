@@ -34,8 +34,6 @@ import App from './App';
 if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing clock manager and React');
-
             // Initialize clock manager
             const manager = new ClockManager();
             manager.start();
@@ -44,8 +42,6 @@ if (typeof document !== 'undefined') {
             initializeReactSettings();
         });
     } else {
-        console.log('DOM ready, initializing clock manager and React');
-
         // Initialize clock manager
         const manager = new ClockManager();
         manager.start();
@@ -62,13 +58,9 @@ function initializeReactSettings() {
         settingsContainer.id = 'react-settings-root';
         document.body.appendChild(settingsContainer);
 
-        console.log('React settings container created:', settingsContainer);
-
         // Mount React app
         const root = createRoot(settingsContainer);
         root.render(React.createElement(App));
-
-        console.log('React settings app mounted successfully');
     } catch (error) {
         console.error('Failed to initialize React settings:', error);
     }

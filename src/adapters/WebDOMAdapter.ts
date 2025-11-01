@@ -19,6 +19,7 @@ export interface IClockAdapter {
  */
 export class WebDOMAdapter implements IClockAdapter {
     private elements: DOMElements;
+    private lastDotsDateValue: string | null = null;
 
     constructor(elements: DOMElements = {}) {
         // Determine clock type based on which elements are provided
@@ -137,6 +138,34 @@ export class WebDOMAdapter implements IClockAdapter {
                 `<b>${dotsData.hours.daytime || ''}</b>` +
                 `<h3>${dotsData.hours.value}<br><span>${dotsData.hours.label}</span></h3>`;
         }
+
+        // Handle date - use requestAnimationFrame to avoid conflicts with innerHTML updates
+        const clockContainer = document.getElementById('clock');
+        if (clockContainer) {
+            requestAnimationFrame(() => {
+                let dateElement = clockContainer.querySelector('.date') as HTMLElement;
+                const newDateValue = dotsData.date?.formatted || null;
+
+                if (newDateValue) {
+                    if (!dateElement) {
+                        dateElement = document.createElement('div');
+                        dateElement.className = 'date';
+                        clockContainer.appendChild(dateElement);
+                    }
+                    // Only update text if it changed
+                    if (dateElement.textContent !== newDateValue) {
+                        dateElement.textContent = newDateValue;
+                    }
+                    this.lastDotsDateValue = newDateValue;
+                } else {
+                    // Remove date if it exists and we don't want to show it anymore
+                    if (dateElement) {
+                        dateElement.remove();
+                    }
+                    this.lastDotsDateValue = null;
+                }
+            });
+        }
     }
 
     private renderAnalog(renderData: AnalogRenderData): string {
@@ -181,17 +210,59 @@ export class WebDOMAdapter implements IClockAdapter {
         html += '<div class="center-dot"></div>';
 
         html += '</div>';
+
+        // Add date if present
+        if (renderData.date) {
+            html += `<div class="date">${renderData.date.formatted}</div>`;
+        }
         return html;
     }
 
     private updateAnalogClock(renderData: AnalogRenderData): void {
         const container = this.elements.container || document.getElementById('analogClock');
-        if (container) {
-            // Always re-render to ensure settings are applied
-            container.innerHTML = this.renderAnalog(renderData);
-            console.log('Analog clock updated');
-        } else {
+        if (!container) {
             console.error('Analog clock container not found');
+            return;
+        }
+
+        // Check if we need to re-render the clock face (only on initialization or settings change)
+        let clockFace = container.querySelector('.clock-face');
+        if (!clockFace) {
+            // Initial render
+            container.innerHTML = this.renderAnalog(renderData);
+            clockFace = container.querySelector('.clock-face');
+        } else {
+            // Update only the hands
+            const hourHand = container.querySelector('.hour-hand') as HTMLElement;
+            const minuteHand = container.querySelector('.minute-hand') as HTMLElement;
+            const secondHand = container.querySelector('.second-hand') as HTMLElement;
+
+            if (hourHand) {
+                hourHand.style.transform = `rotate(${renderData.hands.hour.angle}deg)`;
+            }
+            if (minuteHand) {
+                minuteHand.style.transform = `rotate(${renderData.hands.minute.angle}deg)`;
+            }
+            if (secondHand && renderData.hands.second) {
+                secondHand.style.transform = `rotate(${renderData.hands.second.angle}deg)`;
+                secondHand.style.display = renderData.showSecondHand !== false ? 'block' : 'none';
+            }
+        }
+
+        // Handle date - only update if changed
+        let dateElement = container.querySelector('.date') as HTMLElement;
+        if (renderData.date) {
+            if (!dateElement) {
+                dateElement = document.createElement('div');
+                dateElement.className = 'date';
+                container.appendChild(dateElement);
+            }
+            // Only update text if it changed
+            if (dateElement.textContent !== renderData.date.formatted) {
+                dateElement.textContent = renderData.date.formatted;
+            }
+        } else if (dateElement) {
+            dateElement.remove();
         }
     }
 

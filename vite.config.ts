@@ -7,6 +7,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
     plugins: [react()],
+    base: '/clock-app/',
     root: './',
     publicDir: 'public',
     build: {

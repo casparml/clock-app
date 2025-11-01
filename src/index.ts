@@ -1,4 +1,5 @@
 // Import styles FIRST
+import './styles/themes.css';
 import './styles/main.css';
 
 // Export types
@@ -29,26 +30,32 @@ import { ClockManager } from './managers/ClockManager';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import analytics from './services/analytics.service';
 
 // Auto-start for web
 if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize clock manager
-            const manager = new ClockManager();
-            manager.start();
-
-            // Initialize React settings
-            initializeReactSettings();
+            initializeApp();
         });
     } else {
-        // Initialize clock manager
-        const manager = new ClockManager();
-        manager.start();
-
-        // Initialize React settings
-        initializeReactSettings();
+        initializeApp();
     }
+}
+
+function initializeApp() {
+    // Track app initialization
+    analytics.track('app_initialized', {
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+    });
+
+    // Initialize clock manager
+    const manager = new ClockManager();
+    manager.start();
+
+    // Initialize React settings
+    initializeReactSettings();
 }
 
 function initializeReactSettings() {
@@ -61,7 +68,12 @@ function initializeReactSettings() {
         // Mount React app
         const root = createRoot(settingsContainer);
         root.render(React.createElement(App));
+
+        analytics.track('react_mounted');
     } catch (error) {
         console.error('Failed to initialize React settings:', error);
+        analytics.track('react_mount_error', {
+            error: error instanceof Error ? error.message : String(error)
+        });
     }
 }

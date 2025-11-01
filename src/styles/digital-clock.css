@@ -44,7 +44,7 @@
 }
 
 #digitalClock .date {
-    font-size: 0.3em;
+    font-size: 1.5rem;
     opacity: 0.8;
     white-space: nowrap;
 }
@@ -61,6 +61,10 @@
 @media screen and (max-width: 880px) {
     #digitalClock {
         font-size: 3em;
+    }
+
+    #digitalClock .date {
+        font-size: 1.2rem;
     }
 }
 

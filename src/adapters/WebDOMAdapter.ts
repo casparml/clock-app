@@ -19,7 +19,6 @@ export interface IClockAdapter {
  */
 export class WebDOMAdapter implements IClockAdapter {
     private elements: DOMElements;
-    private lastDotsDateValue: string | null = null;
 
     constructor(elements: DOMElements = {}) {
         // Determine clock type based on which elements are provided
@@ -156,13 +155,11 @@ export class WebDOMAdapter implements IClockAdapter {
                     if (dateElement.textContent !== newDateValue) {
                         dateElement.textContent = newDateValue;
                     }
-                    this.lastDotsDateValue = newDateValue;
                 } else {
                     // Remove date if it exists and we don't want to show it anymore
                     if (dateElement) {
                         dateElement.remove();
                     }
-                    this.lastDotsDateValue = null;
                 }
             });
         }

@@ -3,45 +3,50 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
 }
 
 .settings-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: #04fc43;
-    box-shadow: 0 0 20px rgba(4, 252, 67, 0.5);
-    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(4, 252, 67, 0.4);
+    box-shadow: 0 8px 32px rgba(4, 252, 67, 0.2);
+    transform: scale(1.05);
 }
 
 .settings-icon {
     width: 24px;
     height: 24px;
     color: #fff;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-button:hover .settings-icon {
+    transform: rotate(90deg);
 }
 
 /* Settings Overlay */
 .settings-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.2s ease;
+    padding: 20px;
 }
 
 @keyframes fadeIn {
@@ -55,49 +60,48 @@
 
 /* Settings Panel */
 .settings-panel {
-    background: linear-gradient(135deg, #2a3139 0%, #3d444d 100%);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 30px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
+    background: linear-gradient(145deg, #2d3748 0%, #1a202c 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 0;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow: hidden;
     box-shadow:
             0 0 0 1px rgba(255, 255, 255, 0.05),
-            0 20px 60px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation: slideIn 0.3s ease;
+            0 24px 48px rgba(0, 0, 0, 0.6),
+            0 12px 24px rgba(0, 0, 0, 0.4);
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideIn {
     from {
-        transform: translateY(-50px);
+        transform: scale(0.95) translateY(20px);
         opacity: 0;
     }
     to {
-        transform: translateY(0);
+        transform: scale(1) translateY(0);
         opacity: 1;
     }
 }
 
 /* Custom Scrollbar */
-.settings-panel::-webkit-scrollbar {
-    width: 8px;
+.settings-content::-webkit-scrollbar {
+    width: 6px;
 }
 
-.settings-panel::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
+.settings-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
 }
 
-.settings-panel::-webkit-scrollbar-thumb {
-    background: rgba(4, 252, 67, 0.3);
-    border-radius: 10px;
-}
-
-.settings-panel::-webkit-scrollbar-thumb:hover {
-    background: rgba(4, 252, 67, 0.5);
+.settings-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* Header */
@@ -105,142 +109,156 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 28px 32px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .settings-header h2 {
-    font-size: 2em;
-    font-weight: 600;
+    font-size: 1.75em;
+    font-weight: 700;
     color: #fff;
-    text-shadow: 0 0 20px rgba(4, 252, 67, 0.3);
+    letter-spacing: -0.02em;
+    margin: 0;
 }
 
 .settings-close {
-    background: rgba(255, 41, 114, 0.2);
-    border: 2px solid rgba(255, 41, 114, 0.3);
-    color: #ff2972;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .settings-close:hover {
-    background: rgba(255, 41, 114, 0.3);
-    border-color: #ff2972;
-    box-shadow: 0 0 15px rgba(255, 41, 114, 0.5);
+    background: rgba(255, 41, 114, 0.15);
+    border-color: rgba(255, 41, 114, 0.3);
+    color: #ff2972;
+    transform: scale(1.05);
 }
 
 /* Content */
 .settings-content {
+    padding: 24px 32px 32px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+    max-height: calc(85vh - 140px);
+    overflow-y: auto;
 }
 
 /* Settings Group */
 .settings-group {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
     padding: 20px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .settings-group:hover {
-    border-color: rgba(4, 252, 67, 0.3);
-    box-shadow: 0 0 20px rgba(4, 252, 67, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .settings-label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 0.95em;
-    font-weight: 500;
-    color: #fff;
-    margin-bottom: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
 }
 
 .label-icon {
-    font-size: 1.2em;
+    font-size: 1.3em;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
 }
 
 /* Select */
 .settings-select {
     width: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 14px 16px;
     color: #fff;
-    font-size: 1em;
+    font-size: 0.95em;
     font-family: 'Poppins', sans-serif;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 15px center;
-    padding-right: 40px;
+    background-position: right 16px center;
+    padding-right: 44px;
 }
 
-.settings-select:hover,
+.settings-select:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
 .settings-select:focus {
     border-color: #04fc43;
-    box-shadow: 0 0 15px rgba(4, 252, 67, 0.3);
+    box-shadow: 0 0 0 3px rgba(4, 252, 67, 0.15);
     outline: none;
 }
 
 .settings-select option {
-    background: #2a3139;
+    background: #1a202c;
     color: #fff;
+    padding: 12px;
 }
 
 /* Toggle Switches */
 .settings-toggles {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .settings-toggle-item {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .settings-toggle-item:hover {
-    border-color: rgba(254, 232, 0, 0.3);
-    box-shadow: 0 0 20px rgba(254, 232, 0, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.3);
+    transform: translateX(2px);
 }
 
 .toggle-label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 0.95em;
     font-weight: 500;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 /* Toggle Switch */
 .toggle-switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 26px;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
 }
 
 .toggle-switch input {
@@ -256,29 +274,26 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    transition: 0.3s;
-    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.15);
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 28px;
 }
 
 .toggle-slider:before {
     position: absolute;
     content: "";
-    height: 18px;
-    width: 18px;
-    left: 2px;
-    bottom: 2px;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
     background: #fff;
-    transition: 0.3s;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-switch input:checked + .toggle-slider {
-    background: #04fc43;
-    border-color: #04fc43;
-    box-shadow: 0 0 15px rgba(4, 252, 67, 0.5);
+    background: linear-gradient(135deg, #04fc43 0%, #03db3a 100%);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -288,24 +303,24 @@
 /* Reset Button */
 .settings-reset-btn {
     width: 100%;
-    background: rgba(255, 41, 114, 0.2);
-    border: 2px solid rgba(255, 41, 114, 0.3);
+    background: rgba(255, 41, 114, 0.1);
+    border: 1px solid rgba(255, 41, 114, 0.25);
     color: #ff2972;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 1em;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 0.95em;
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
+    transition: all 0.2s ease;
+    margin-top: 8px;
 }
 
 .settings-reset-btn:hover {
-    background: rgba(255, 41, 114, 0.3);
-    border-color: #ff2972;
-    box-shadow: 0 0 20px rgba(255, 41, 114, 0.5);
-    transform: translateY(-2px);
+    background: rgba(255, 41, 114, 0.15);
+    border-color: rgba(255, 41, 114, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 41, 114, 0.2);
 }
 
 .settings-reset-btn:active {
@@ -314,55 +329,57 @@
 
 /* Clock type selector */
 .clock-type-selector {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
 }
 
 .clock-switch-btn {
-    padding: 10px 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.25);
     color: rgba(255, 255, 255, 0.7);
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    min-width: 100px;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .clock-switch-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
 }
 
 .clock-switch-btn.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.8);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(4, 252, 67, 0.2) 0%, rgba(3, 219, 58, 0.15) 100%);
+    border-color: rgba(4, 252, 67, 0.5);
+    color: #04fc43;
+    box-shadow: 0 0 20px rgba(4, 252, 67, 0.2);
 }
 
 /* Footer */
 .settings-footer {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
+    padding: 20px 32px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
 }
 
 .settings-footer p {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9em;
-    margin: 5px 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85em;
+    margin: 6px 0;
+    font-weight: 500;
 }
 
 .settings-footer-small {
-    font-size: 0.8em !important;
-    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 0.75em !important;
+    color: rgba(255, 255, 255, 0.35) !important;
 }
 
 /* Fade In Animation */
@@ -381,36 +398,102 @@
     }
 }
 
-/* Responsive */
+/* Responsive - Tablet */
 @media screen and (max-width: 880px) {
     .settings-button {
-        width: 45px;
-        height: 45px;
-        top: 15px;
-        right: 15px;
+        width: 50px;
+        height: 50px;
+        top: 16px;
+        right: 16px;
+        border-radius: 14px;
     }
 
     .settings-icon {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
     }
 
     .settings-panel {
-        padding: 25px;
-        width: 95%;
+        max-width: 480px;
+    }
+
+    .settings-header {
+        padding: 24px 28px;
     }
 
     .settings-header h2 {
         font-size: 1.6em;
     }
+
+    .settings-content {
+        padding: 20px 28px 28px;
+    }
+
+    .settings-footer {
+        padding: 18px 28px;
+    }
 }
 
+/* Responsive - Mobile */
 @media screen and (max-width: 480px) {
+    .settings-overlay {
+        padding: 0;
+    }
+
     .settings-panel {
-        padding: 20px;
+        max-height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .settings-button {
+        width: 46px;
+        height: 46px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .settings-header {
+        padding: 20px 24px;
     }
 
     .settings-header h2 {
         font-size: 1.4em;
+    }
+
+    .settings-close {
+        width: 34px;
+        height: 34px;
+    }
+
+    .settings-content {
+        padding: 18px 24px 24px;
+        max-height: calc(100vh - 130px);
+    }
+
+    .settings-group {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .settings-toggle-item {
+        padding: 16px 18px;
+    }
+
+    .clock-type-selector {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .clock-switch-btn {
+        padding: 14px;
+    }
+
+    .settings-footer {
+        padding: 16px 24px;
+    }
+
+    .settings-footer p {
+        font-size: 0.8em;
     }
 }

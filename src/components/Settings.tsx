@@ -80,184 +80,178 @@ const Settings: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="settings-content">
-                            {/* Clock Type Section */}
-                            <div className="settings-group">
-                                <label className="settings-label">
-                                    <span className="label-icon">🕐</span> Clock Type
-                                </label>
-                                <div className="clock-type-selector">
-                                    <button
-                                        className={`clock-switch-btn ${activeType === 'digital' ? 'active' : ''}`}
-                                        onClick={() => handleClockTypeClick('digital')}
-                                    >
-                                        Digital
-                                    </button>
-                                    <button
-                                        className={`clock-switch-btn ${activeType === 'dots' ? 'active' : ''}`}
-                                        onClick={() => handleClockTypeClick('dots')}
-                                    >
-                                        Dots
-                                    </button>
-                                    <button
-                                        className={`clock-switch-btn ${activeType === 'analog' ? 'active' : ''}`}
-                                        onClick={() => handleClockTypeClick('analog')}
-                                    >
-                                        Analog
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Theme Section */}
-                            <div className="settings-group">
-                                <label className="settings-label">
-                                    <span className="label-icon">🎨</span> Theme
-                                </label>
-                                <select
-                                    value={settings.clock.theme}
-                                    onChange={(e) =>
-                                        updateSettings({
-                                            clock: { ...settings.clock, theme: e.target.value as 'light' | 'dark' | 'auto' },
-                                        })
-                                    }
-                                    className="settings-select"
-                                >
-                                    <option value="light">☀️ Light</option>
-                                    <option value="dark">🌙 Dark</option>
-                                    <option value="auto">🔄 Auto (System)</option>
-                                </select>
-                            </div>
-
-                            {/* Time Format Section */}
-                            <div className="settings-group">
-                                <label className="settings-label">
-                                    <span className="label-icon">🕐</span> Time Format
-                                </label>
-                                <select
-                                    value={settings.clock.timeFormat}
-                                    onChange={(e) =>
-                                        updateSettings({
-                                            clock: { ...settings.clock, timeFormat: e.target.value as '12h' | '24h' },
-                                        })
-                                    }
-                                    className="settings-select"
-                                >
-                                    <option value="12h">12 Hour (AM/PM)</option>
-                                    <option value="24h">24 Hour (Military)</option>
-                                </select>
-                            </div>
-
-                            {/* Toggle Options */}
-                            <div className="settings-toggles">
-                                {/* Show Seconds */}
-                                <div className="settings-toggle-item">
-                                    <div className="toggle-label">
-                                        <span className="label-icon">⏱️</span>
-                                        <span>Show Seconds</span>
-                                    </div>
-                                    <label className="toggle-switch">
-                                        <input
-                                            type="checkbox"
-                                            checked={settings.clock.showSeconds}
-                                            onChange={(e) =>
-                                                updateSettings({
-                                                    clock: { ...settings.clock, showSeconds: e.target.checked },
-                                                })
-                                            }
-                                        />
-                                        <span className="toggle-slider"></span>
-                                    </label>
-                                </div>
-
-                                {/* Show Date */}
-                                <div className="settings-toggle-item">
-                                    <div className="toggle-label">
-                                        <span className="label-icon">📅</span>
-                                        <span>Show Date</span>
-                                    </div>
-                                    <label className="toggle-switch">
-                                        <input
-                                            type="checkbox"
-                                            checked={settings.clock.showDate}
-                                            onChange={(e) =>
-                                                updateSettings({
-                                                    clock: { ...settings.clock, showDate: e.target.checked },
-                                                })
-                                            }
-                                        />
-                                        <span className="toggle-slider"></span>
-                                    </label>
-                                </div>
-
-                                {/* Blink Separator - NEW */}
-                                <div className="settings-toggle-item">
-                                    <div className="toggle-label">
-                                        <span className="label-icon">✨</span>
-                                        <span>Blink Separators</span>
-                                    </div>
-                                    <label className="toggle-switch">
-                                        <input
-                                            type="checkbox"
-                                            checked={settings.clock.blinkSeparator}
-                                            onChange={(e) =>
-                                                updateSettings({
-                                                    clock: { ...settings.clock, blinkSeparator: e.target.checked },
-                                                })
-                                            }
-                                        />
-                                        <span className="toggle-slider"></span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            {/* Date Format (conditional) */}
-                            {settings.clock.showDate && (
-                                <div className="settings-group settings-fade-in">
+                            <div className="settings-content">
+                                {/* Clock Type Section */}
+                                <div className="settings-group">
                                     <label className="settings-label">
-                                        <span className="label-icon">📆</span> Date Format
+                                        <span className="label-icon">🕐</span> Clock Type
+                                    </label>
+                                    <div className="clock-type-selector">
+                                        <button
+                                            className={`clock-switch-btn ${activeType === 'digital' ? 'active' : ''}`}
+                                            onClick={() => handleClockTypeClick('digital')}
+                                        >
+                                            Digital
+                                        </button>
+                                        <button
+                                            className={`clock-switch-btn ${activeType === 'dots' ? 'active' : ''}`}
+                                            onClick={() => handleClockTypeClick('dots')}
+                                        >
+                                            Dots
+                                        </button>
+                                        <button
+                                            className={`clock-switch-btn ${activeType === 'analog' ? 'active' : ''}`}
+                                            onClick={() => handleClockTypeClick('analog')}
+                                        >
+                                            Analog
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Theme Section */}
+                                <div className="settings-group">
+                                    <label className="settings-label">
+                                        <span className="label-icon">🎨</span> Theme
                                     </label>
                                     <select
-                                        value={settings.clock.dateFormat}
+                                        value={settings.clock.theme}
                                         onChange={(e) =>
                                             updateSettings({
-                                                clock: {
-                                                    ...settings.clock,
-                                                    dateFormat: e.target.value as 'short' | 'long' | 'numeric',
-                                                },
+                                                clock: { ...settings.clock, theme: e.target.value as 'light' | 'dark' | 'auto' },
                                             })
                                         }
                                         className="settings-select"
                                     >
-                                        <option value="long">Long (January 1, 2025)</option>
-                                        <option value="short">Short (Jan 1, 2025)</option>
-                                        <option value="numeric">Numeric (01/01/2025)</option>
+                                        <option value="light">☀️ Light</option>
+                                        <option value="dark">🌙 Dark</option>
+                                        <option value="auto">🔄 Auto (System)</option>
                                     </select>
                                 </div>
-                            )}
 
-                            {/* Reset Button */}
-                            <button
-                                onClick={() => {
-                                    if (confirm('Reset all settings to defaults?')) {
-                                        resetSettings();
-                                    }
-                                }}
-                                className="settings-reset-btn"
-                            >
-                                🔄 Reset to Defaults
-                            </button>
-                        </div>
+                                {/* Time Format Section */}
+                                <div className="settings-group">
+                                    <label className="settings-label">
+                                        <span className="label-icon">🕐</span> Time Format
+                                    </label>
+                                    <select
+                                        value={settings.clock.timeFormat}
+                                        onChange={(e) =>
+                                            updateSettings({
+                                                clock: { ...settings.clock, timeFormat: e.target.value as '12h' | '24h' },
+                                            })
+                                        }
+                                        className="settings-select"
+                                    >
+                                        <option value="12h">12 Hour (AM/PM)</option>
+                                        <option value="24h">24 Hour (Military)</option>
+                                    </select>
+                                </div>
 
-                        {/* Footer */}
-                        <div className="settings-footer">
-                            <p>💾 Settings saved locally</p>
-                            <p className="settings-footer-small">Coming soon: ☁️ Cloud sync with Google OAuth</p>
+                                {/* Toggle Options */}
+                                <div className="settings-toggles">
+                                    {/* Show Seconds */}
+                                    <div className="settings-toggle-item">
+                                        <div className="toggle-label">
+                                            <span className="label-icon">⏱️</span>
+                                            <span>Show Seconds</span>
+                                        </div>
+                                        <label className="toggle-switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={settings.clock.showSeconds}
+                                                onChange={(e) =>
+                                                    updateSettings({
+                                                        clock: { ...settings.clock, showSeconds: e.target.checked },
+                                                    })
+                                                }
+                                            />
+                                            <span className="toggle-slider"></span>
+                                        </label>
+                                    </div>
+
+                                    {/* Show Date */}
+                                    <div className="settings-toggle-item">
+                                        <div className="toggle-label">
+                                            <span className="label-icon">📅</span>
+                                            <span>Show Date</span>
+                                        </div>
+                                        <label className="toggle-switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={settings.clock.showDate}
+                                                onChange={(e) =>
+                                                    updateSettings({
+                                                        clock: { ...settings.clock, showDate: e.target.checked },
+                                                    })
+                                                }
+                                            />
+                                            <span className="toggle-slider"></span>
+                                        </label>
+                                    </div>
+
+                                    {/* Blink Separator */}
+                                    <div className="settings-toggle-item">
+                                        <div className="toggle-label">
+                                            <span className="label-icon">✨</span>
+                                            <span>Blink Separators</span>
+                                        </div>
+                                        <label className="toggle-switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={settings.clock.blinkSeparator}
+                                                onChange={(e) =>
+                                                    updateSettings({
+                                                        clock: { ...settings.clock, blinkSeparator: e.target.checked },
+                                                    })
+                                                }
+                                            />
+                                            <span className="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* Date Format (conditional) */}
+                                {settings.clock.showDate && (
+                                    <div className="settings-group settings-fade-in">
+                                        <label className="settings-label">
+                                            <span className="label-icon">📆</span> Date Format
+                                        </label>
+                                        <select
+                                            value={settings.clock.dateFormat}
+                                            onChange={(e) =>
+                                                updateSettings({
+                                                    clock: {
+                                                        ...settings.clock,
+                                                        dateFormat: e.target.value as 'short' | 'long' | 'numeric',
+                                                    },
+                                                })
+                                            }
+                                            className="settings-select"
+                                        >
+                                            <option value="long">Long (January 1, 2025)</option>
+                                            <option value="short">Short (Jan 1, 2025)</option>
+                                            <option value="numeric">Numeric (01/01/2025)</option>
+                                        </select>
+                                    </div>
+                                )}
+
+                                {/* Reset Button */}
+                                <button
+                                    onClick={() => {
+                                        if (confirm('Reset all settings to defaults?')) {
+                                            resetSettings();
+                                        }
+                                    }}
+                                    className="settings-reset-btn"
+                                >
+                                    🔄 Reset to Defaults
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </>
-    );
-};
+                )}
+            </>
+        );
+    };
 
-export default Settings;
+    export default Settings;

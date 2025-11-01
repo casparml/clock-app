@@ -1,5 +1,4 @@
-// src/contexts/SettingsContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type {UserSettings} from '../types/settings';
 import { SettingsService } from '../services/settingsService';
@@ -16,6 +15,15 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
+// Export hook before the component
+export function useSettings(): SettingsContextType {
+    const context = useContext(SettingsContext);
+    if (!context) {
+        throw new Error('useSettings must be used within a SettingsProvider');
+    }
+    return context;
+}
+
 export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [settings, setSettings] = useState<UserSettings>(() =>
         SettingsService.loadSettings()
@@ -26,16 +34,22 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         return (saved as ClockType) || 'digital';
     });
 
+    const isInitialMount = useRef(true);
+
     // Save clockType to localStorage and notify ClockManager when it changes
     useEffect(() => {
+        // Skip dispatching event on initial mount
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         localStorage.setItem('clockType', clockType);
 
         // Dispatch custom event to notify ClockManager
         window.dispatchEvent(new CustomEvent('clockTypeChanged', {
             detail: clockType
         }));
-
-        console.log('Clock type changed to:', clockType);
     }, [clockType]);
 
     const updateSettings = (partialSettings: Partial<UserSettings>) => {
@@ -83,12 +97,4 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
             {children}
         </SettingsContext.Provider>
     );
-};
-
-export const useSettings = (): SettingsContextType => {
-    const context = useContext(SettingsContext);
-    if (!context) {
-        throw new Error('useSettings must be used within a SettingsProvider');
-    }
-    return context;
 };

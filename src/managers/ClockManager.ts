@@ -20,7 +20,7 @@ export class ClockManager {
             if (button.closest('#react-settings-root')) {
                 return;
             }
-            
+
             button.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
                 const clockType = target.getAttribute('data-clock-type') as ClockType;
@@ -37,7 +37,6 @@ export class ClockManager {
             if (e.key === 'clockType' && e.newValue) {
                 const newType = e.newValue as ClockType;
                 if (newType !== this.currentType) {
-                    console.log('Clock type changed via storage event:', newType);
                     this.switchClock(newType);
                 }
             }
@@ -47,7 +46,6 @@ export class ClockManager {
         window.addEventListener('clockTypeChanged', ((e: CustomEvent) => {
             const newType = e.detail as ClockType;
             if (newType !== this.currentType) {
-                console.log('Clock type changed via custom event:', newType);
                 this.switchClock(newType);
             }
         }) as EventListener);
@@ -55,15 +53,11 @@ export class ClockManager {
 
     switchClock(type: ClockType): void {
         if (this.currentType === type && this.currentController) {
-            console.log(`Already on ${type} clock, skipping switch`);
             return;
         }
 
-        console.log(`Switching to ${type} clock`);
-
         // Stop current controller
         if (this.currentController) {
-            console.log(`Stopping previous clock controller`);
             this.currentController.stop();
             this.currentController = null;
         }
@@ -84,36 +78,37 @@ export class ClockManager {
             el.classList.remove('active');
         });
 
-        // Update button states
+        // Update button states - but skip React buttons!
         document.querySelectorAll('.clock-switch-btn').forEach(btn => {
+            // Skip buttons inside React settings panel
+            if (btn.closest('#react-settings-root')) {
+                return;
+            }
             btn.classList.remove('active');
         });
-        const activeButton = document.querySelector(`[data-clock-type="${type}"]`);
+
+        // Only update non-React buttons
+        const activeButton = document.querySelector(`.clock-switch-btn[data-clock-type="${type}"]:not(#react-settings-root .clock-switch-btn)`);
         if (activeButton) {
             activeButton.classList.add('active');
         }
 
         // Show the selected clock element
         const clockElement = this.getClockElement(type);
-        if (clockElement) {
-            console.log(`Found clock element for ${type}:`, clockElement);
-            clockElement.style.display = type === 'digital' ? 'block' : 'flex';
-            clockElement.classList.add('active');
-        } else {
+        if (!clockElement) {
             console.error(`Clock element not found for type: ${type}`);
             return;
         }
 
+        clockElement.style.display = type === 'digital' ? 'block' : 'flex';
+        clockElement.classList.add('active');
+
         // Create new controller
         try {
-            console.log(`Creating renderer for ${type}`);
             const renderer = ClockRendererFactory.create(type, this.getDefaultConfig(type));
-            console.log(`Creating adapter with elements:`, this.getAdapterElements(type));
             const adapter = new WebDOMAdapter(this.getAdapterElements(type));
             this.currentController = new ClockController(renderer, adapter);
             this.currentController.start();
-
-            console.log(`${type} clock initialized and started`);
 
             // Save preference
             localStorage.setItem('clockType', type);
@@ -180,8 +175,6 @@ export class ClockManager {
     }
 
     private applySettings(): void {
-        console.log('Applying settings, current type:', this.currentType);
-
         // Re-initialize the current clock with new settings
         if (this.currentType) {
             const type = this.currentType;
@@ -202,12 +195,10 @@ export class ClockManager {
     start(): void {
         // Get saved preference or default to digital
         const savedType = (localStorage.getItem('clockType') as ClockType) || 'digital';
-        console.log(`Starting with ${savedType} clock`);
         this.switchClock(savedType);
 
         // Listen for settings changes from React
         window.addEventListener('settingsChanged', () => {
-            console.log('Settings changed event received');
             this.applySettings();
         });
     }
